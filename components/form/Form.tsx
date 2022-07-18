@@ -20,7 +20,7 @@ export const Form = (props: any) => {
       },
       body: JSON.stringify({
         item: arg1,
-        quantity: arg2,
+        quantity: parseInt(arg2),
       }),
     });
   };
