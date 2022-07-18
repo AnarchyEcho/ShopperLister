@@ -10,8 +10,23 @@ export const Form = (props: any) => {
       quantity: '',
     },
   });
+
+  const post = (arg1: any, arg2: any) => {
+    fetch('https://echo-restful.herokuapp.com/api/shopping', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        item: arg1,
+        quantity: arg2,
+      }),
+    });
+  };
+
   const onSubmit = (data: any) => {
-    console.log(data);
+    post(data.item, data.quantity);
     reset({ item: '', quantity: '' });
   };
 

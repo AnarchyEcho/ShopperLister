@@ -10,6 +10,8 @@ export const Content = (props: any) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [itemName, setItemName] = useState('');
+  const [quantityNumber, setQuantityNumber] = useState('');
 
   const onRefresh = useCallback(() => {
     props.setRefreshing(true);
@@ -52,6 +54,8 @@ export const Content = (props: any) => {
               style={styles.item}
               onPress={() => {
                 setModalVisible(true);
+                setItemName(item.item);
+                setQuantityNumber(item.quantity);
               }}
             >
               <View>
@@ -64,6 +68,8 @@ export const Content = (props: any) => {
       <ItemModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
+        itemName={itemName}
+        quantityNumber={quantityNumber}
       />
     </View>
   );

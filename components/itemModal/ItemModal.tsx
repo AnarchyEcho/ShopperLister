@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 
 export const ItemModal = (props: any) => {
 
   return (
     <Modal
-      animationType="slide"
       transparent={true}
       visible={props.modalVisible}
       onRequestClose={() => {
@@ -13,17 +11,20 @@ export const ItemModal = (props: any) => {
         props.setModalVisible(!props.modalVisible);
       }}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>Hello World!</Text>
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => props.setModalVisible(!props.modalVisible)}
-          >
-            <Text style={styles.textStyle}>Hide Modal</Text>
-          </Pressable>
-        </View>
-      </View>
+      <TouchableOpacity style={styles.centeredView} activeOpacity={1} onPressOut={() => props.setModalVisible(!props.modalVisible)}>
+        <TouchableWithoutFeedback>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Item: {props.itemName}</Text>
+            <Text style={styles.modalQuantity}>Quantity: {props.quantityNumber}</Text>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => props.setModalVisible(!props.modalVisible)}
+            >
+              <Text style={styles.buttonText}>Close Menu</Text>
+            </Pressable>
+          </View>
+        </TouchableWithoutFeedback>
+      </TouchableOpacity>
     </Modal>
   );
 };
@@ -31,15 +32,19 @@ export const ItemModal = (props: any) => {
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    paddingTop: '50%',
+    paddingBottom: '50%',
+    backgroundColor: '#00000075',
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#353535',
     borderRadius: 20,
-    padding: 35,
+    height: 200,
+    width: 200,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -57,14 +62,16 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: '#ffa500',
+    marginTop: '50%',
   },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+  buttonText: {
+    color: '#232323',
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
+  modalTitle: {
+    color: '#fefefe',
+    fontSize: 32,
+  },
+  modalQuantity: {
+    color: '#fefefe',
   },
 });
