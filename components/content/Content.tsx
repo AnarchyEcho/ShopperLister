@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { ItemModal } from '../itemModal/ItemModal';
-
-const wait = (timeout: any) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-};
+import { wait } from '../../helpers/wait';
 
 export const Content = (props: any) => {
   const [isLoading, setLoading] = useState(true);
@@ -94,10 +91,11 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 24,
     color: '#fefefe',
+    textAlign: 'center',
   },
   item: {
     flex: 1,
-    maxWidth: 175,
+    maxWidth: '100%',
     height: 50,
     backgroundColor: '#303030',
     marginBottom: 10,

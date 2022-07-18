@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
+import { wait } from '../../helpers/wait';
 
 export const Form = (props: any) => {
   const quantityRef: any = useRef();
@@ -28,6 +29,8 @@ export const Form = (props: any) => {
   const onSubmit = (data: any) => {
     post(data.item, data.quantity);
     reset({ item: '', quantity: '' });
+    props.setRefreshing(true);
+    wait(1000).then(() => props.setRefreshing(false));
   };
 
   useEffect(() => {
