@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   },
   Text: {
     marginLeft: 10,
+    marginRight: 10,
     fontSize: 24,
     color: '#fefefe',
     textAlign: 'center',
