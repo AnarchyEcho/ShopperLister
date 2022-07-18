@@ -1,6 +1,38 @@
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, TouchableWithoutFeedback, TextInput } from 'react-native';
+
+const wait = (timeout: any) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 
 export const ItemModal = (props: any) => {
+  const { control, handleSubmit, formState: { errors }, reset } = useForm({
+    defaultValues: {
+      quantity: '',
+    },
+  });
+
+  const put = (quantity: any) => {
+    fetch('https://echo-restful.herokuapp.com/api/shopping', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        item: props.itemName,
+        quantity: parseInt(quantity),
+      }),
+    });
+  };
+
+  const onSubmit = (data: any) => {
+    put(data.quantity);
+    reset({ quantity: '' });
+    props.setModalVisible(!props.modalVisible);
+    props.setRefresh(true);
+    wait(1000).then(() => props.setRefresh(false));
+  };
 
   return (
     <Modal
@@ -16,8 +48,35 @@ export const ItemModal = (props: any) => {
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Item: {props.itemName}</Text>
             <Text style={styles.modalQuantity}>Quantity: {props.quantityNumber}</Text>
+            <Controller
+              control={control}
+              rules={{
+                maxLength: 4,
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View style={styles.wrapper}>
+                  <Text style={styles.inputLabel}>Change quantity: </Text>
+                  <TextInput
+                    style={styles.quantityEdit}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    keyboardType='number-pad'
+                  />
+                  <Pressable
+                    style={() => [{ backgroundColor: value ? '#ffa500' : '#767676' }, styles.submitButton]}
+                    onPress={handleSubmit(onSubmit)}
+                    disabled={value ? false : true}
+                  >
+                    <Text style={styles.buttonText}>Submit</Text>
+                  </Pressable>
+                </View>
+              )}
+              name="quantity"
+            />
             <Pressable
-              style={[styles.button, styles.buttonClose]}
+              style={({ pressed }) => [{ backgroundColor: pressed ? '#c58612' : '#ffa500' }, styles.closeButton]}
               onPress={() => props.setModalVisible(!props.modalVisible)}
             >
               <Text style={styles.buttonText}>Close Menu</Text>
@@ -43,8 +102,8 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: '#353535',
     borderRadius: 20,
-    height: 200,
-    width: 200,
+    height: 250,
+    width: 300,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -55,23 +114,59 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  button: {
-    borderRadius: 20,
-    padding: 10,
+  wrapper: {
+    flexDirection: 'row',
+    marginTop: 15,
+  },
+  inputLabel: {
+    height: 35,
+    fontSize: 16,
+    color: '#fefefe',
+    textAlignVertical: 'center',
+  },
+  quantityEdit: {
+    width: 50,
+    height: 35,
+    textAlign: 'center',
+    color: '#fefefe',
+    backgroundColor: '#505050',
+    borderRadius: 5,
+  },
+  submitButton: {
+    alignSelf: 'center',
+    color: '#000',
+    padding: 5,
+    width: 60,
+    height: 35,
+    borderRadius: 5,
+    marginLeft: 20,
     elevation: 2,
   },
-  buttonClose: {
-    backgroundColor: '#ffa500',
-    marginTop: '50%',
+  closeButton: {
+    alignSelf: 'center',
+    color: '#000',
+    padding: 10,
+    width: 100,
+    borderRadius: 5,
+    marginTop: 90,
+    elevation: 2,
   },
   buttonText: {
-    color: '#232323',
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   modalTitle: {
-    color: '#fefefe',
+    color: '#232323',
+    backgroundColor: '#ffa500',
+    width: '100%',
+    borderRadius: 20,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 0,
     fontSize: 32,
+    textAlign: 'center',
   },
   modalQuantity: {
     color: '#fefefe',
+    fontSize: 20,
   },
 });

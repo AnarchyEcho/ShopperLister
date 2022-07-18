@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { ItemModal } from '../itemModal/ItemModal';
 
@@ -66,6 +66,8 @@ export const Content = (props: any) => {
         />
       )}
       <ItemModal
+        refresh={props.refresh}
+        setRefresh={props.setRefreshing}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         itemName={itemName}
@@ -92,7 +94,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 24,
     color: '#fefefe',
-    textAlignVertical: 'center',
   },
   item: {
     flex: 1,
@@ -100,5 +101,6 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: '#303030',
     marginBottom: 10,
+    borderRadius: 5,
   },
 });

@@ -11,7 +11,7 @@ export const Form = (props: any) => {
     },
   });
 
-  const post = (arg1: any, arg2: any) => {
+  const post = (item: any, quantity: any) => {
     fetch('https://echo-restful.herokuapp.com/api/shopping', {
       method: 'POST',
       headers: {
@@ -19,8 +19,8 @@ export const Form = (props: any) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        item: arg1,
-        quantity: parseInt(arg2),
+        item: item,
+        quantity: parseInt(quantity),
       }),
     });
   };
