@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { ItemModal } from '../itemModal/ItemModal';
 
 const wait = (timeout: any) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -8,6 +9,7 @@ const wait = (timeout: any) => {
 export const Content = (props: any) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const onRefresh = useCallback(() => {
     props.setRefreshing(true);
@@ -30,7 +32,7 @@ export const Content = (props: any) => {
 
   useEffect(() => {
     getShoppingList();
-  }, []);
+  }, [props.refresh]);
 
   return (
     <View style={styles.content}>
@@ -45,12 +47,24 @@ export const Content = (props: any) => {
           }
           data={data}
           renderItem={({ item }: any) => (
-            <View key={item._id}>
-              <Text style={styles.Text}>{item.item} ({item.quantity})</Text>
-            </View>
+            <Pressable
+              key={item._id}
+              style={styles.item}
+              onPress={() => {
+                setModalVisible(true);
+              }}
+            >
+              <View>
+                <Text style={styles.Text}>{item.item} ({item.quantity})</Text>
+              </View>
+            </Pressable>
           )}
         />
       )}
+      <ItemModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
     </View>
   );
 };
@@ -72,5 +86,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 24,
     color: '#fefefe',
+    textAlignVertical: 'center',
+  },
+  item: {
+    flex: 1,
+    maxWidth: 175,
+    height: 50,
+    backgroundColor: '#303030',
+    marginBottom: 10,
   },
 });

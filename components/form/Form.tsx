@@ -84,7 +84,7 @@ export const Form = (props: any) => {
         onPress={handleSubmit(onSubmit)}
         style={({ pressed }) => [{ backgroundColor: pressed ? '#c58612' : '#ffa500' }, styles.Button]}
       >
-        <Text style={styles.Submit}>Submit</Text>
+        <Text style={styles.Submit}>Add Item</Text>
       </Pressable>
     </ScrollView>
   );
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
-    padding: 10,
+    padding: 20,
   },
   wrapper: {
     flexDirection: 'row',

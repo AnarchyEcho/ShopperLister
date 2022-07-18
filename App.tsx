@@ -5,12 +5,14 @@ import { Form, Content } from './components';
 
 const App = () => {
   const [refreshing, setRefreshing] = useState(false);
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       <Content
         refresh={refreshing}
-        setRefreshing={setRefreshing}/>
+        setRefreshing={setRefreshing}
+      />
       <Form
         refresh={refreshing}
         setRefreshing={setRefreshing}/>
@@ -21,7 +23,6 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    width: '100%',
     backgroundColor: '#232323',
   },
 });
