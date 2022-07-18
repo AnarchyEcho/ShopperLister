@@ -1,13 +1,59 @@
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+
+const wait = (timeout: any) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 
 export const Content = (props: any) => {
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+  const onRefresh = useCallback(() => {
+    props.setRefreshing(true);
+    wait(2000).then(() => props.setRefreshing(false));
+  }, []);
+
+  const getShoppingList = async () => {
+    try {
+      const response = await fetch('https://echo-restful.herokuapp.com/api/shopping');
+      const json = await response.json();
+      setData(json);
+    }
+    catch (error) {
+      console.error(error);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getShoppingList();
+  }, []);
 
   return (
     <View style={styles.content}>
-      <Text style={styles.Text} >Content</Text>
+      <Text style={styles.Title}>Shopping List</Text>
+      {isLoading ? <ActivityIndicator/> : (
+        <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={props.refresh}
+              onRefresh={onRefresh}
+            />
+          }
+          data={data}
+          renderItem={({ item }: any) => (
+            <View key={item._id}>
+              <Text style={styles.Text}>{item.item} ({item.quantity})</Text>
+            </View>
+          )}
+        />
+      )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   content: {
@@ -15,8 +61,16 @@ const styles = StyleSheet.create({
     marginTop: 50,
     flex: 3,
   },
+  Title: {
+    marginBottom: 10,
+    fontSize: 32,
+    color: '#232323',
+    textAlign: 'center',
+    backgroundColor: '#ffa500',
+  },
   Text: {
-    color: "white",
-    textAlign: 'center'
-  }
-})
+    marginLeft: 10,
+    fontSize: 24,
+    color: '#fefefe',
+  },
+});

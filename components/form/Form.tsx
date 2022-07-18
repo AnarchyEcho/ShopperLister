@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native';
-import { Controller, useForm } from 'react-hook-form'
+import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
 
 export const Form = (props: any) => {
@@ -7,25 +7,29 @@ export const Form = (props: any) => {
   const { control, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       item: '',
-      quantity: ''
-    }
+      quantity: '',
+    },
   });
   const onSubmit = (data: any) => {
-    console.log(data)
-    reset({ item: '', quantity: '' })
+    console.log(data);
+    reset({ item: '', quantity: '' });
   };
 
   useEffect(() => {
     if (props.refresh) {
       reset({
         item: '',
-        quantity: ''
-      })
+        quantity: '',
+      });
     }
-  }, [props.refresh])
+  }, [props.refresh]);
 
   return (
-    <View style={styles.form}>
+    <ScrollView
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={styles.form}
+      scrollEnabled={false}
+    >
       {(errors.quantity || errors.item) && <Text style={styles.Text}>
         Please fill in all the fields.
       </Text>}
@@ -33,20 +37,23 @@ export const Form = (props: any) => {
       <Controller
         control={control}
         rules={{
-         required: true,
+          required: true,
         }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.itemInput}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            blurOnSubmit={false}
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              quantityRef.current.focus();
-            }}
-          />
+          <View style={styles.wrapper}>
+            <Text style={styles.inputLabel}>Item name: </Text>
+            <TextInput
+              style={styles.itemInput}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              blurOnSubmit={false}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                quantityRef.current.focus();
+              }}
+            />
+          </View>
         )}
         name="item"
       />
@@ -54,18 +61,21 @@ export const Form = (props: any) => {
       <Controller
         control={control}
         rules={{
-         maxLength: 4,
-         required: true
+          maxLength: 4,
+          required: true,
         }}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.quantityInput}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            keyboardType='number-pad'
-            ref={quantityRef}
-          />
+          <View style={styles.wrapper}>
+            <Text style={styles.inputLabel}>Quantity: </Text>
+            <TextInput
+              style={styles.quantityInput}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              keyboardType='number-pad'
+              ref={quantityRef}
+            />
+          </View>
         )}
         name="quantity"
       />
@@ -76,24 +86,35 @@ export const Form = (props: any) => {
       >
         <Text style={styles.Submit}>Submit</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   form: {
     width: '100%',
     flex: 1,
-    gap: 10,
+    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 15,
+    padding: 10,
+  },
+  wrapper: {
+    flexDirection: 'row',
   },
   Text: {
-    color: "#fefefe",
-    textAlign: 'center'
+    color: '#fefefe',
+    textAlign: 'center',
+  },
+  inputLabel: {
+    height: 35,
+    fontSize: 14,
+    color: '#fefefe',
+    textAlignVertical: 'center',
   },
   Submit: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   itemInput: {
     width: 200,
@@ -101,8 +122,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fefefe',
     backgroundColor: '#505050',
+    borderRadius: 5,
     marginBottom: 5,
-    borderRadius: 5
   },
   quantityInput: {
     width: 50,
@@ -110,14 +131,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fefefe',
     backgroundColor: '#505050',
+    borderRadius: 5,
     marginBottom: 15,
-    borderRadius: 5
   },
   Button: {
     alignSelf: 'center',
     color: '#000',
     padding: 10,
     width: 100,
-    borderRadius: 5
-  }
-})
+    borderRadius: 5,
+  },
+});
