@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native';
 import { Controller, useForm } from 'react-hook-form'
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const Form = (props: any) => {
+  const quantityRef: any = useRef();
   const { control, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       item: '',
@@ -11,6 +12,7 @@ export const Form = (props: any) => {
   });
   const onSubmit = (data: any) => {
     console.log(data)
+    reset({ item: '', quantity: '' })
   };
 
   useEffect(() => {
@@ -39,7 +41,11 @@ export const Form = (props: any) => {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
-            clearButtonMode="always"
+            blurOnSubmit={false}
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              quantityRef.current.focus();
+            }}
           />
         )}
         name="item"
@@ -58,20 +64,14 @@ export const Form = (props: any) => {
             onChangeText={onChange}
             value={value}
             keyboardType='number-pad'
-            clearButtonMode="always"
+            ref={quantityRef}
           />
         )}
         name="quantity"
       />
 
       <Pressable
-        onPress={() => {
-          handleSubmit(onSubmit)
-          reset({
-            item: '',
-            quantity: ''
-          })
-        }}
+        onPress={handleSubmit(onSubmit)}
         style={({ pressed }) => [{ backgroundColor: pressed ? '#c58612' : '#ffa500' }, styles.Button]}
       >
         <Text style={styles.Submit}>Submit</Text>
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   },
   itemInput: {
     width: 200,
+    height: 35,
     textAlign: 'center',
     color: '#fefefe',
     backgroundColor: '#505050',
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
   },
   quantityInput: {
     width: 50,
+    height: 35,
     textAlign: 'center',
     color: '#fefefe',
     backgroundColor: '#505050',
