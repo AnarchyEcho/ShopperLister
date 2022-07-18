@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    maxWidth: '100%',
-    height: 50,
+    maxWidth: 'auto',
+    height: 'auto',
     backgroundColor: '#303030',
     marginBottom: 10,
     borderRadius: 5,
