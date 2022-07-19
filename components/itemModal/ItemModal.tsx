@@ -20,7 +20,7 @@ export const ItemModal = (props: any) => {
   };
 
   const onSubmit = (data: any) => {
-    Request('PUT', data.quantity);
+    Request('PUT', props.itemName, data.quantity);
     reset({ quantity: '', delete: '' });
     props.setModalVisible(!props.modalVisible);
     props.setRefresh(true);
