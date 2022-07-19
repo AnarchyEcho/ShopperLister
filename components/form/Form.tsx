@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
 import { wait } from '../../helpers/wait';
+import { Request } from '../../api/Requests';
 
 export const Form = (props: any) => {
   const quantityRef: any = useRef();
@@ -12,22 +13,8 @@ export const Form = (props: any) => {
     },
   });
 
-  const post = (item: any, quantity: any) => {
-    fetch('https://echo-restful.herokuapp.com/api/shopping', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        item: item,
-        quantity: parseInt(quantity),
-      }),
-    });
-  };
-
   const onSubmit = (data: any) => {
-    post(data.item, data.quantity);
+    Request('POST', data.item, data.quantity);
     reset({ item: '', quantity: '' });
     props.setRefreshing(true);
     wait(1000).then(() => props.setRefreshing(false));

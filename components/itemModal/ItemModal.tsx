@@ -1,6 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { wait } from '../../helpers/wait';
+import { Request } from '../../api/Requests';
 
 export const ItemModal = (props: any) => {
   const { control, handleSubmit, reset } = useForm({
@@ -10,35 +11,8 @@ export const ItemModal = (props: any) => {
     },
   });
 
-  const put = (quantity: any) => {
-    fetch('https://echo-restful.herokuapp.com/api/shopping', {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        item: props.itemName,
-        quantity: parseInt(quantity),
-      }),
-    });
-  };
-
-  const del = () => {
-    fetch('https://echo-restful.herokuapp.com/api/shopping', {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        item: props.itemName,
-      }),
-    });
-  };
-
   const onDelete = () => {
-    del();
+    Request('DELETE', props.itemName);
     reset({ quantity: '', delete: '' });
     props.setModalVisible(!props.modalVisible);
     props.setRefresh(true);
@@ -46,7 +20,7 @@ export const ItemModal = (props: any) => {
   };
 
   const onSubmit = (data: any) => {
-    put(data.quantity);
+    Request('PUT', data.quantity);
     reset({ quantity: '', delete: '' });
     props.setModalVisible(!props.modalVisible);
     props.setRefresh(true);

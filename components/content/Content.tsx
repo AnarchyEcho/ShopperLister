@@ -36,12 +36,14 @@ export const Content = (props: any) => {
   return (
     <View style={styles.content}>
       <Text style={styles.Title}>Shopping List</Text>
-      {isLoading ? <ActivityIndicator/> : (
+      {isLoading ? <ActivityIndicator size='large' color='#ffa500' /> : (
         <FlatList
           refreshControl={
             <RefreshControl
               refreshing={props.refresh}
               onRefresh={onRefresh}
+              colors={['#ffa500']}
+              progressBackgroundColor='#303030'
             />
           }
           data={data}
