@@ -5,6 +5,7 @@ import { Form, Content } from './components';
 
 const App = () => {
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   return (
     <View style={styles.container}>
@@ -12,10 +13,15 @@ const App = () => {
       <Content
         refresh={refreshing}
         setRefreshing={setRefreshing}
+        isLoading={isLoading}
+        setLoading={setLoading}
       />
       <Form
         refresh={refreshing}
-        setRefreshing={setRefreshing}/>
+        setRefreshing={setRefreshing}
+        isLoading={isLoading}
+        setLoading={setLoading}
+      />
     </View>
   );
 };

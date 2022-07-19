@@ -4,7 +4,6 @@ import { ItemModal } from '../itemModal/ItemModal';
 import { wait } from '../../helpers/wait';
 
 export const Content = (props: any) => {
-  const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [itemName, setItemName] = useState('');
@@ -25,7 +24,7 @@ export const Content = (props: any) => {
       console.error(error);
     }
     finally {
-      setLoading(false);
+      props.setLoading(false);
     }
   };
 
@@ -36,34 +35,38 @@ export const Content = (props: any) => {
   return (
     <View style={styles.content}>
       <Text style={styles.Title}>Shopping List</Text>
-      {isLoading ? <ActivityIndicator size='large' color='#ffa500' /> : (
-        <FlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={props.refresh}
-              onRefresh={onRefresh}
-              colors={['#ffa500']}
-              progressBackgroundColor='#303030'
-            />
-          }
-          data={data}
-          renderItem={({ item }: any) => (
-            <Pressable
-              key={item._id}
-              style={styles.item}
-              onPress={() => {
-                setModalVisible(true);
-                setItemName(item.item);
-                setQuantityNumber(item.quantity);
-              }}
-            >
-              <View>
-                <Text style={styles.Text}>{item.item} ({item.quantity})</Text>
-              </View>
-            </Pressable>
-          )}
-        />
-      )}
+      {props.isLoading ?
+        <View>
+          <ActivityIndicator size='large' color='#ffa500' />
+          <Text style={styles.Text}>Please wait, loading list...</Text>
+        </View> : (
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                refreshing={props.refresh}
+                onRefresh={onRefresh}
+                colors={['#ffa500']}
+                progressBackgroundColor='#303030'
+              />
+            }
+            data={data}
+            renderItem={({ item }: any) => (
+              <Pressable
+                key={item._id}
+                style={styles.item}
+                onPress={() => {
+                  setModalVisible(true);
+                  setItemName(item.item);
+                  setQuantityNumber(item.quantity);
+                }}
+              >
+                <View>
+                  <Text style={styles.Text}>{item.item} ({item.quantity})</Text>
+                </View>
+              </Pressable>
+            )}
+          />
+        )}
       <ItemModal
         refresh={props.refresh}
         setRefresh={props.setRefreshing}

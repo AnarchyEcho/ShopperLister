@@ -87,7 +87,8 @@ export const Form = (props: any) => {
 
       <Pressable
         onPress={handleSubmit(onSubmit)}
-        style={({ pressed }) => [{ backgroundColor: pressed ? '#c58612' : '#ffa500' }, styles.Button]}
+        style={() => [{ backgroundColor: (props.refresh || props.isLoading) ? '#767676' : '#ffa500' }, styles.Button]}
+        disabled={(props.refresh || props.isLoading) ? true : false}
       >
         <Text style={styles.Submit}>Add Item</Text>
       </Pressable>
