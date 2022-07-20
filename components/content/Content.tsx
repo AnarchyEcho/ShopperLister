@@ -77,10 +77,10 @@ export const Content = (props: any) => {
                   setQuantityNumber(item.quantity);
                 }}
               >
-                <View>
-                  <Text style={[styles.Text, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>
-                    {item.item} ({item.quantity}) <Checkbox value={checked.includes(item._id)} style={styles.checkbox} pointerEvents='none'/>
-                  </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={[styles.Text1, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>{item.item}</Text>
+                  <Text style={[styles.Text2, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>({item.quantity})</Text>
+                  <Checkbox value={checked.includes(item._id)} style={styles.checkbox} pointerEvents='none'/>
                 </View>
               </Pressable>
             )}
@@ -115,10 +115,20 @@ const styles = StyleSheet.create({
   },
   Text: {
     marginLeft: 10,
-    marginRight: 10,
     fontSize: 24,
     color: '#fefefe',
     textAlign: 'center',
+  },
+  Text1: {
+    width: '60%',
+    marginLeft: 10,
+    fontSize: 24,
+    color: '#fefefe',
+  },
+  Text2: {
+    marginLeft: 10,
+    fontSize: 24,
+    color: '#fefefe',
   },
   item: {
     flex: 1,
@@ -129,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   checkbox: {
-    borderWidth: 0,
-    marginTop: 5,
+    borderWidth: 2,
+    marginLeft: 50,
   },
 });
