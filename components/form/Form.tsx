@@ -57,6 +57,7 @@ export const Form = (props: any) => {
               onSubmitEditing={() => {
                 quantityRef.current.focus();
               }}
+              placeholder='Bread'
             />
           </View>
         )}
@@ -79,6 +80,7 @@ export const Form = (props: any) => {
               value={value}
               keyboardType='number-pad'
               ref={quantityRef}
+              placeholder='1'
             />
           </View>
         )}

@@ -5,7 +5,7 @@ import { ItemModal } from '../itemModal/ItemModal';
 import { wait } from '../../helpers/wait';
 
 export const Content = (props: any) => {
-  const [data, setData] = useState([]);
+  const [data, setData]: any[] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [itemName, setItemName] = useState('');
   const [quantityNumber, setQuantityNumber] = useState('');

@@ -56,6 +56,7 @@ export const ItemModal = (props: any) => {
                     onChangeText={onChange}
                     value={value}
                     keyboardType='number-pad'
+                    placeholder={props.quantityNumber.toString()}
                   />
                   <Pressable
                     style={() => [{ backgroundColor: value ? '#ffa500' : '#767676' }, styles.submitButton]}
@@ -81,6 +82,7 @@ export const ItemModal = (props: any) => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    placeholder='Del'
                   />
                   <Pressable
                     style={() => [{ backgroundColor: value != 'Del' ? '#767676' : '#ffa500' }, styles.deleteButton]}
