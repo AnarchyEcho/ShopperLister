@@ -79,7 +79,7 @@ export const Content = (props: any) => {
               >
                 <View>
                   <Text style={[styles.Text, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>
-                    {item.item} ({item.quantity}) <Checkbox value={checked.includes(item._id)} style={styles.checkbox}/>
+                    {item.item} ({item.quantity}) <Checkbox value={checked.includes(item._id)} style={styles.checkbox} pointerEvents='none'/>
                   </Text>
                 </View>
               </Pressable>
