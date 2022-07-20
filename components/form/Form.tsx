@@ -103,8 +103,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
-    padding: 20,
+    padding: 15,
   },
   wrapper: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View, StatusBar } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { ItemModal } from '../itemModal/ItemModal';
 import { wait } from '../../helpers/wait';
@@ -101,12 +101,14 @@ export const Content = (props: any) => {
 const styles = StyleSheet.create({
   content: {
     width: '100%',
-    marginTop: 50,
+    marginTop: StatusBar.currentHeight,
     flex: 3,
   },
   Title: {
     marginBottom: 10,
-    fontSize: 32,
+    fontSize: 30,
+    paddingBottom: 5,
+    paddingTop: 5,
     color: '#232323',
     textAlign: 'center',
     backgroundColor: '#ffa500',
