@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import Checkbox from 'expo-checkbox';
 import { ItemModal } from '../itemModal/ItemModal';
 import { wait } from '../../helpers/wait';
 
@@ -8,6 +9,7 @@ export const Content = (props: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [itemName, setItemName] = useState('');
   const [quantityNumber, setQuantityNumber] = useState('');
+  const [checked, setChecked]: any[] = useState([]);
 
   const onRefresh = useCallback(() => {
     props.setRefreshing(true);
@@ -53,15 +55,32 @@ export const Content = (props: any) => {
             renderItem={({ item }: any) => (
               <Pressable
                 key={item._id}
-                style={styles.item}
+                style={[styles.item, { backgroundColor: checked.includes(item._id) ? '#30303050' : '#303030' }]}
                 onPress={() => {
+                  if (!checked.includes(item._id)) {
+                    const tempArr = checked.slice();
+                    tempArr.push(item._id);
+                    setChecked(tempArr);
+                  }
+                  else {
+                    checked.forEach((id: any) => {
+                      if (id === item._id) {
+                        const tempArr = checked.filter((x: any) => x !== id);
+                        setChecked(tempArr);
+                      }
+                    });
+                  }
+                }}
+                onLongPress={() => {
                   setModalVisible(true);
                   setItemName(item.item);
                   setQuantityNumber(item.quantity);
                 }}
               >
                 <View>
-                  <Text style={styles.Text}>{item.item} ({item.quantity})</Text>
+                  <Text style={[styles.Text, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>
+                    {item.item} ({item.quantity}) <Checkbox value={checked.includes(item._id)} style={styles.checkbox}/>
+                  </Text>
                 </View>
               </Pressable>
             )}
@@ -106,5 +125,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#303030',
     marginBottom: 10,
     borderRadius: 5,
+  },
+  checkbox: {
+    borderWidth: 0,
+    marginTop: 5,
   },
 });

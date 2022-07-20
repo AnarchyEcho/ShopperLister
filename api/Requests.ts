@@ -11,3 +11,16 @@ export const Request = ((method: string, item: any, quantity?: any) => {
     }),
   });
 });
+
+export const userRequest = ((method: string, userId: any) => {
+  fetch('https://echo-restful.herokuapp.com/api/shopping/users', {
+    method: method,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      uuid: userId,
+    }),
+  });
+});
