@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#303030',
     marginBottom: 10,
     borderRadius: 5,
+    paddingVertical: 4,
   },
   checkbox: {
     borderWidth: 2,

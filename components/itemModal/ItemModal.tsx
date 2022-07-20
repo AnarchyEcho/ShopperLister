@@ -27,6 +27,11 @@ export const ItemModal = (props: any) => {
     wait(1000).then(() => props.setRefresh(false));
   };
 
+  function useRegex(input: any) {
+    const regex = /[Dd]el/i;
+    return regex.test(input);
+  }
+
   return (
     <Modal
       transparent={true}
@@ -36,7 +41,13 @@ export const ItemModal = (props: any) => {
         props.setModalVisible(!props.modalVisible);
       }}
     >
-      <TouchableOpacity style={styles.centeredView} activeOpacity={1} onPressOut={() => props.setModalVisible(!props.modalVisible)}>
+      <TouchableOpacity style={styles.centeredView} activeOpacity={1} onPressOut={() => {
+        props.setModalVisible(!props.modalVisible);
+        reset({
+          delete: '',
+          quantity: '',
+        });
+      }}>
         <TouchableWithoutFeedback>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Item: {props.itemName}</Text>
@@ -76,7 +87,7 @@ export const ItemModal = (props: any) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <View style={styles.wrapper}>
-                  <Text style={styles.inputLabel}>Type "Del" </Text>
+                  <Text style={styles.inputLabel}>Write "Del": </Text>
                   <TextInput
                     style={styles.deleteField}
                     onBlur={onBlur}
@@ -85,9 +96,9 @@ export const ItemModal = (props: any) => {
                     placeholder='Del'
                   />
                   <Pressable
-                    style={() => [{ backgroundColor: value != 'Del' ? '#767676' : '#ffa500' }, styles.deleteButton]}
+                    style={() => [{ backgroundColor: !useRegex(value) ? '#767676' : '#ffa500' }, styles.deleteButton]}
                     onPress={() => {onDelete();}}
-                    disabled={value != 'Del'}
+                    disabled={!useRegex(value)}
                   >
                     <Text style={styles.buttonText}>Delete</Text>
                   </Pressable>
@@ -124,9 +135,10 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: '#353535',
     borderRadius: 20,
-    height: 250,
+    height: 'auto',
     width: 300,
-    alignItems: 'center',
+    paddingBottom: 15,
+    alignItems: 'flex-start',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -139,9 +151,11 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     marginTop: 15,
+    marginLeft: 5,
   },
   inputLabel: {
     height: 35,
+    width: '40%',
     fontSize: 16,
     color: '#fefefe',
     textAlignVertical: 'center',
@@ -166,7 +180,8 @@ const styles = StyleSheet.create({
   deleteField: {
     width: 50,
     height: 35,
-    textAlign: 'center',
+    textAlign: 'left',
+    paddingLeft: 5,
     color: '#fefefe',
     backgroundColor: '#505050',
     borderRadius: 5,
@@ -206,5 +221,6 @@ const styles = StyleSheet.create({
   modalQuantity: {
     color: '#fefefe',
     fontSize: 20,
+    alignSelf: 'center',
   },
 });

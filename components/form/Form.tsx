@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
   itemInput: {
     width: 200,
     height: 35,
-    textAlign: 'center',
     color: '#fefefe',
     backgroundColor: '#505050',
     borderRadius: 5,
     marginBottom: 5,
+    paddingLeft: 5,
   },
   quantityInput: {
     width: 50,
