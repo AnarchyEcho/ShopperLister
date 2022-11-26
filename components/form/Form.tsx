@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { wait } from '../../helpers/wait';
-import { Request } from '../../api/Requests';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Form = (props: any) => {
   const quantityRef: any = useRef();
@@ -13,21 +13,14 @@ export const Form = (props: any) => {
     },
   });
 
-  const onSubmit = (data: any) => {
-    Request('POST', data.item, data.quantity);
+  const onSubmit = async (data: any) => {
+    await AsyncStorage.setItem(`@${data.item}`, JSON.stringify(data));
     reset({ item: '', quantity: '' });
+    console.log('--------------');
+    console.log(data);
     props.setRefreshing(true);
     wait(1000).then(() => props.setRefreshing(false));
   };
-
-  useEffect(() => {
-    if (props.refresh) {
-      reset({
-        item: '',
-        quantity: '',
-      });
-    }
-  }, [props.refresh]);
 
   return (
     <ScrollView

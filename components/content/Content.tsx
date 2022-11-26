@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Tex
 import Checkbox from 'expo-checkbox';
 import { ItemModal } from '../itemModal/ItemModal';
 import { wait } from '../../helpers/wait';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Content = (props: any) => {
   const [data, setData]: any[] = useState([]);
@@ -13,14 +14,18 @@ export const Content = (props: any) => {
 
   const onRefresh = useCallback(() => {
     props.setRefreshing(true);
-    wait(2000).then(() => props.setRefreshing(false));
+    wait(300).then(() => props.setRefreshing(false));
   }, []);
 
   const getShoppingList = async () => {
     try {
-      const response = await fetch('https://echo-restful.herokuapp.com/api/shopping');
-      const json = await response.json();
-      setData(json);
+      const arr: any[] = [];
+      const keys: any = await AsyncStorage.getAllKeys();
+      const json = await AsyncStorage.multiGet([...keys]);
+      json.forEach((item: any) => {
+        arr.push(JSON.parse(item[1]));
+      });
+      setData(arr);
     }
     catch (error) {
       console.error(error);
@@ -54,17 +59,17 @@ export const Content = (props: any) => {
             data={data}
             renderItem={({ item }: any) => (
               <Pressable
-                key={item._id}
-                style={[styles.item, { backgroundColor: checked.includes(item._id) ? '#30303050' : '#303030' }]}
+                key={item.item}
+                style={[styles.item, { backgroundColor: checked.includes(item.item) ? '#30303050' : '#303030' }]}
                 onPress={() => {
-                  if (!checked.includes(item._id)) {
+                  if (!checked.includes(item.item)) {
                     const tempArr = checked.slice();
-                    tempArr.push(item._id);
+                    tempArr.push(item.item);
                     setChecked(tempArr);
                   }
                   else {
                     checked.forEach((id: any) => {
-                      if (id === item._id) {
+                      if (id === item.item) {
                         const tempArr = checked.filter((x: any) => x !== id);
                         setChecked(tempArr);
                       }
@@ -78,9 +83,9 @@ export const Content = (props: any) => {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={[styles.Text1, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>{item.item}</Text>
-                  <Text style={[styles.Text2, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>({item.quantity})</Text>
-                  <Checkbox value={checked.includes(item._id)} style={styles.checkbox} pointerEvents='none'/>
+                  <Text style={[styles.Text1, { color: checked.includes(item.item) ? '#009688' : '#fefefe' }]}>{item.item}</Text>
+                  <Text style={[styles.Text2, { color: checked.includes(item.item) ? '#009688' : '#fefefe' }]}>({item.quantity})</Text>
+                  <Checkbox value={checked.includes(item.item)} style={styles.checkbox} pointerEvents='none'/>
                 </View>
               </Pressable>
             )}
