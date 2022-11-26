@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity, TouchableWithoutFeedback, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { wait } from '../../helpers/wait';
-import { Request } from '../../api/Requests';
 
 export const ItemModal = (props: any) => {
   const { control, handleSubmit, reset } = useForm({
@@ -11,16 +11,15 @@ export const ItemModal = (props: any) => {
     },
   });
 
-  const onDelete = () => {
-    Request('DELETE', props.itemName);
+  const onDelete = async (item: any) => {
+    await AsyncStorage.removeItem(item);
     reset({ quantity: '', delete: '' });
     props.setModalVisible(!props.modalVisible);
     props.setRefresh(true);
     wait(1000).then(() => props.setRefresh(false));
   };
 
-  const onSubmit = (data: any) => {
-    Request('PUT', props.itemName, data.quantity);
+  const onSubmit = async (data: any) => {
     reset({ quantity: '', delete: '' });
     props.setModalVisible(!props.modalVisible);
     props.setRefresh(true);
@@ -97,7 +96,7 @@ export const ItemModal = (props: any) => {
                   />
                   <Pressable
                     style={() => [{ backgroundColor: !useRegex(value) ? '#767676' : '#ffa500' }, styles.deleteButton]}
-                    onPress={() => {onDelete();}}
+                    onPress={() => {onDelete(`@${props.itemName}`);}}
                     disabled={!useRegex(value)}
                   >
                     <Text style={styles.buttonText}>Delete</Text>

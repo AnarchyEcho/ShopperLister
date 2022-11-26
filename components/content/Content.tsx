@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Tex
 import Checkbox from 'expo-checkbox';
 import { ItemModal } from '../itemModal/ItemModal';
 import { wait } from '../../helpers/wait';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Content = (props: any) => {
   const [data, setData]: any[] = useState([]);
@@ -13,14 +14,19 @@ export const Content = (props: any) => {
 
   const onRefresh = useCallback(() => {
     props.setRefreshing(true);
-    wait(2000).then(() => props.setRefreshing(false));
+    wait(300).then(() => props.setRefreshing(false));
   }, []);
 
   const getShoppingList = async () => {
     try {
-      const response = await fetch('https://echo-restful.herokuapp.com/api/shopping');
-      const json = await response.json();
-      setData(json);
+      const arr: any[] = [];
+      const keys: any = await AsyncStorage.getAllKeys();
+      console.log(keys);
+      const json = await AsyncStorage.multiGet([...keys]);
+      json.forEach((item: any) => {
+        arr.push(JSON.parse(item[1]));
+      });
+      setData(arr);
     }
     catch (error) {
       console.error(error);
@@ -52,7 +58,7 @@ export const Content = (props: any) => {
               />
             }
             data={data}
-            renderItem={({ item }: any) => (
+            renderItem={({ item, i }: any) => (
               <Pressable
                 key={item._id}
                 style={[styles.item, { backgroundColor: checked.includes(item._id) ? '#30303050' : '#303030' }]}
@@ -61,12 +67,16 @@ export const Content = (props: any) => {
                     const tempArr = checked.slice();
                     tempArr.push(item._id);
                     setChecked(tempArr);
+                    item.checked = true;
+                    console.log(item);
                   }
                   else {
                     checked.forEach((id: any) => {
                       if (id === item._id) {
                         const tempArr = checked.filter((x: any) => x !== id);
                         setChecked(tempArr);
+                        item.checked = false;
+                        console.log(item);
                       }
                     });
                   }
