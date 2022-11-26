@@ -26,7 +26,6 @@ export const Content = (props: any) => {
         arr.push(JSON.parse(item[1]));
       });
       setData(arr);
-      console.log(data);
     }
     catch (error) {
       console.error(error);
