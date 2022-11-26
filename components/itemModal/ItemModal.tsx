@@ -19,7 +19,11 @@ export const ItemModal = (props: any) => {
     wait(1000).then(() => props.setRefresh(false));
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (item: any) => {
+    await AsyncStorage.setItem(`@${props.itemName}`, JSON.stringify({
+      item: props.itemName,
+      quantity: item.quantity,
+    }));
     reset({ quantity: '', delete: '' });
     props.setModalVisible(!props.modalVisible);
     props.setRefresh(true);

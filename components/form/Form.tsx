@@ -10,14 +10,14 @@ export const Form = (props: any) => {
     defaultValues: {
       item: '',
       quantity: '',
-      checked: false,
     },
   });
 
   const onSubmit = async (data: any) => {
-    console.log(data);
-    AsyncStorage.setItem(`@${data.item}`, JSON.stringify(data));
+    await AsyncStorage.setItem(`@${data.item}`, JSON.stringify(data));
     reset({ item: '', quantity: '' });
+    console.log('--------------');
+    console.log(data);
     props.setRefreshing(true);
     wait(1000).then(() => props.setRefreshing(false));
   };

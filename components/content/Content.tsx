@@ -21,12 +21,12 @@ export const Content = (props: any) => {
     try {
       const arr: any[] = [];
       const keys: any = await AsyncStorage.getAllKeys();
-      console.log(keys);
       const json = await AsyncStorage.multiGet([...keys]);
       json.forEach((item: any) => {
         arr.push(JSON.parse(item[1]));
       });
       setData(arr);
+      console.log(data);
     }
     catch (error) {
       console.error(error);
@@ -58,25 +58,21 @@ export const Content = (props: any) => {
               />
             }
             data={data}
-            renderItem={({ item, i }: any) => (
+            renderItem={({ item }: any) => (
               <Pressable
-                key={item._id}
-                style={[styles.item, { backgroundColor: checked.includes(item._id) ? '#30303050' : '#303030' }]}
+                key={item.item}
+                style={[styles.item, { backgroundColor: checked.includes(item.item) ? '#30303050' : '#303030' }]}
                 onPress={() => {
-                  if (!checked.includes(item._id)) {
+                  if (!checked.includes(item.item)) {
                     const tempArr = checked.slice();
-                    tempArr.push(item._id);
+                    tempArr.push(item.item);
                     setChecked(tempArr);
-                    item.checked = true;
-                    console.log(item);
                   }
                   else {
                     checked.forEach((id: any) => {
-                      if (id === item._id) {
+                      if (id === item.item) {
                         const tempArr = checked.filter((x: any) => x !== id);
                         setChecked(tempArr);
-                        item.checked = false;
-                        console.log(item);
                       }
                     });
                   }
@@ -88,9 +84,9 @@ export const Content = (props: any) => {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={[styles.Text1, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>{item.item}</Text>
-                  <Text style={[styles.Text2, { color: checked.includes(item._id) ? '#009688' : '#fefefe' }]}>({item.quantity})</Text>
-                  <Checkbox value={checked.includes(item._id)} style={styles.checkbox} pointerEvents='none'/>
+                  <Text style={[styles.Text1, { color: checked.includes(item.item) ? '#009688' : '#fefefe' }]}>{item.item}</Text>
+                  <Text style={[styles.Text2, { color: checked.includes(item.item) ? '#009688' : '#fefefe' }]}>({item.quantity})</Text>
+                  <Checkbox value={checked.includes(item.item)} style={styles.checkbox} pointerEvents='none'/>
                 </View>
               </Pressable>
             )}
