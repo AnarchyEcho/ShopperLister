@@ -16,8 +16,6 @@ export const Form = (props: any) => {
   const onSubmit = async (data: any) => {
     await AsyncStorage.setItem(`@${data.item}`, JSON.stringify(data));
     reset({ item: '', quantity: '' });
-    console.log('--------------');
-    console.log(data);
     props.setRefreshing(true);
     wait(1000).then(() => props.setRefreshing(false));
   };
@@ -74,6 +72,7 @@ export const Form = (props: any) => {
               keyboardType='number-pad'
               ref={quantityRef}
               placeholder='1'
+              maxLength={4}
             />
           </View>
         )}

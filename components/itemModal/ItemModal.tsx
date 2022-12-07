@@ -31,8 +31,8 @@ export const ItemModal = (props: any) => {
   };
 
   function useRegex(input: any) {
-    const regex = /[Dd]el/i;
-    return regex.test(input);
+    const regex = /[Dd]el\b/i;
+    return input.match(regex);
   }
 
   return (
@@ -71,6 +71,7 @@ export const ItemModal = (props: any) => {
                     value={value}
                     keyboardType='number-pad'
                     placeholder={props.quantityNumber.toString()}
+                    maxLength={4}
                   />
                   <Pressable
                     style={() => [{ backgroundColor: value ? '#ffa500' : '#767676' }, styles.submitButton]}
