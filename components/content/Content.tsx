@@ -85,7 +85,7 @@ export const Content = (props: any) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={[styles.Text1, { color: checked.includes(item.item) ? '#009688' : '#fefefe' }]}>{item.item}</Text>
                   <Text style={[styles.Text2, { color: checked.includes(item.item) ? '#009688' : '#fefefe' }]}>({item.quantity})</Text>
-                  <Checkbox value={checked.includes(item.item)} style={styles.checkbox} pointerEvents='none'/>
+                  <Checkbox value={checked.includes(item.item)} style={styles.checkbox} pointerEvents='none' />
                 </View>
               </Pressable>
             )}
@@ -118,6 +118,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: '#ffa500',
   },
+  item: {
+    flex: 1,
+    maxWidth: 'auto',
+    height: 'auto',
+    backgroundColor: '#303030',
+    marginBottom: 10,
+    borderRadius: 5,
+    paddingVertical: 4,
+  },
   Text: {
     marginLeft: 10,
     fontSize: 24,
@@ -131,21 +140,12 @@ const styles = StyleSheet.create({
     color: '#fefefe',
   },
   Text2: {
+    width: '20%',
     marginLeft: 10,
     fontSize: 24,
     color: '#fefefe',
   },
-  item: {
-    flex: 1,
-    maxWidth: 'auto',
-    height: 'auto',
-    backgroundColor: '#303030',
-    marginBottom: 10,
-    borderRadius: 5,
-    paddingVertical: 4,
-  },
   checkbox: {
     borderWidth: 2,
-    marginLeft: 50,
   },
 });
