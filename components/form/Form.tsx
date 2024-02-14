@@ -5,6 +5,7 @@ import { wait } from '../../helpers/wait';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Form = (props: any) => {
+  const nameRef: any = useRef();
   const quantityRef: any = useRef();
   const { control, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
@@ -48,6 +49,7 @@ export const Form = (props: any) => {
               onSubmitEditing={() => {
                 quantityRef.current.focus();
               }}
+              ref={nameRef}
               placeholder='Bread'
             />
           </View>
@@ -70,6 +72,10 @@ export const Form = (props: any) => {
               onChangeText={onChange}
               value={value}
               keyboardType='number-pad'
+              onSubmitEditing={() => {
+                handleSubmit(onSubmit)();
+                nameRef.current.focus();
+              }}
               ref={quantityRef}
               placeholder='1'
               maxLength={4}
