@@ -1,14 +1,15 @@
-import { StatusBar } from "expo-status-bar";
-import { Text, View, StyleSheet } from "react-native";
-import * as sqlite from 'expo-sqlite'
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { Suspense, useEffect, useState } from "react";
-import { ISettings } from "@/interfaces";
+import { StatusBar } from 'expo-status-bar';
+import { Text, View, StyleSheet } from 'react-native';
+import * as sqlite from 'expo-sqlite';
+import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+import { Suspense, useEffect, useState } from 'react';
+import { ISettings } from '@/interfaces';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 
 export default function Index() {
-  const [settings, setSettings]: [ISettings, React.Dispatch<any>] = useState<any>({})
+  const [ready, setReady] = useState(false);
+  const [settings, setSettings]: [ISettings | undefined, React.Dispatch<any>] = useState<any>();
 
   useEffect(() => {
     db.execAsync(`
@@ -23,19 +24,22 @@ export default function Index() {
       for await (const row of db.getEachAsync('select name,value from settings;') as any) {
         setSettings((old: any) => ({
           ...old,
-          [row.name]: row.value
-        }))
+          [row.name]: row.name === 'theme' ? JSON.parse(row.value) : row.value,
+        }));
       }
     }
-    getSettings()
-  }, [])
+    getSettings();
+    setReady(true);
+  }, []);
+
+  console.log(settings?.theme[settings?.chosenTheme]?.background);
 
   const styles = StyleSheet.create({
     container: {
       height: '100%',
-      backgroundColor: '#232323',
-    }
-  })
+      backgroundColor: settings?.theme[settings?.chosenTheme]?.background ?? '#232323',
+    },
+  });
 
   useDrizzleStudio(db);
   return (
@@ -43,7 +47,12 @@ export default function Index() {
       <Suspense fallback={<Text>Loading...</Text>}>
         <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
           <StatusBar style="dark" />
-          <Text>{settings.chosenTheme}</Text>
+          {
+            ready ?
+              <Text>{settings?.chosenTheme}</Text>
+              :
+              <Text>Loading...</Text>
+          }
         </sqlite.SQLiteProvider>
       </Suspense>
     </View>
