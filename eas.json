@@ -3,14 +3,20 @@
     "version": ">= 0.55.1"
   },
   "build": {
+    "base": {
+      "bun": "1.1.18"
+    },
     "development": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+      "extends": "base",
       "distribution": "internal"
     },
     "production": {
+      "extends": "base",
       "android": {
         "buildType": "apk",
         "image": "latest"
