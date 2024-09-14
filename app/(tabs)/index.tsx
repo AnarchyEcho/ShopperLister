@@ -8,7 +8,6 @@ import { ISettings } from '@/interfaces';
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 
 export default function Index() {
-  const [ready, setReady] = useState(false);
   const [settings, setSettings]: [ISettings | undefined, React.Dispatch<any>] = useState<any>();
 
   useEffect(() => {
@@ -36,7 +35,6 @@ export default function Index() {
       }
     };
     getSettings();
-    setReady(true);
   }, []);
 
   const styles = StyleSheet.create({
