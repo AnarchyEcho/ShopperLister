@@ -7,5 +7,6 @@ export interface ISettings {
 }
 
 interface ITheme {
+  color: string
   background: string
 }

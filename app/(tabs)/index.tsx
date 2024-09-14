@@ -15,29 +15,37 @@ export default function Index() {
     db.execAsync(`
       PRAGMA journal_mode = WAL;
       create table if not exists toc (id INTEGER PRIMARY KEY UNIQUE NOT NULL, tableName text UNIQUE, type text);
-      create table if not exists settings (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, value text);
+      create table if not exists settings (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text UNIQUE, value text);
+      insert or ignore into settings values (null, "chosenTheme", "dark");
+      insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE"},"light":{"background":"#FEFEFE","color":"#000000"}}');
       insert or ignore into toc values (null, "settings", "settings");
       create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
       insert or ignore into toc values (null, "list_1", "shoppingList");
-      `);
+    `);
     async function getSettings() {
-      for await (const row of db.getEachAsync('select name,value from settings;') as any) {
-        setSettings((old: any) => ({
-          ...old,
-          [row.name]: row.name === 'theme' ? JSON.parse(row.value) : row.value,
-        }));
+      try {
+        for await (const row of db.getEachAsync('select name,value from settings;') as any) {
+          setSettings((old: any) => ({
+            ...old,
+            [row.name]: row.name === 'theme' ? JSON.parse(row.value) : row.value,
+          }));
+        }
       }
-    }
+      catch (error) {
+        console.log(error);
+      }
+    };
     getSettings();
     setReady(true);
   }, []);
 
-  console.log(settings?.theme[settings?.chosenTheme]?.background);
-
   const styles = StyleSheet.create({
     container: {
       height: '100%',
-      backgroundColor: settings?.theme[settings?.chosenTheme]?.background ?? '#232323',
+      backgroundColor: settings?.theme ? settings?.theme[settings?.chosenTheme].background : '#232323',
+    },
+    text: {
+      color: settings?.theme ? settings?.theme[settings?.chosenTheme].color : '#FEFEFE',
     },
   });
 
@@ -46,13 +54,8 @@ export default function Index() {
     <View style={styles.container}>
       <Suspense fallback={<Text>Loading...</Text>}>
         <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
-          <StatusBar style="dark" />
-          {
-            ready ?
-              <Text>{settings?.chosenTheme}</Text>
-              :
-              <Text>Loading...</Text>
-          }
+          <StatusBar style={settings?.chosenTheme} />
+          <Text style={styles.text}>{settings?.chosenTheme ? settings?.chosenTheme : 'Loading...'}</Text>
         </sqlite.SQLiteProvider>
       </Suspense>
     </View>
