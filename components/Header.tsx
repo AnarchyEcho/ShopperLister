@@ -2,13 +2,11 @@ import { ISettings } from '@/interfaces';
 import { View, Text, StyleSheet } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import { useAtom } from 'jotai';
+import { settingsAtom } from '@/atoms';
 
-interface IProps {
-  settings: ISettings | undefined
-}
-
-export const Header = (props: IProps) => {
-  const { settings } = props;
+export const Header = () => {
+  const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
 
   const styles = StyleSheet.create({
     header: {

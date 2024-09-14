@@ -14,10 +14,13 @@ export const Content = (props: IProps) => {
       height: '100%',
       paddingTop: 10,
       paddingBottom: 10,
-      paddingLeft: 10,
-      paddingRight: 10,
+      paddingLeft: 5,
+      paddingRight: 5,
       display: 'flex',
       flexDirection: 'column',
+    },
+    text: {
+      color: settings?.theme ? settings?.theme[settings?.chosenTheme].color : '#FEFEFE',
     },
   });
 

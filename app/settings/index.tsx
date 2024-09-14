@@ -1,7 +1,11 @@
+import { settingsAtom } from '@/atoms';
+import { ISettings } from '@/interfaces';
+import { useAtom } from 'jotai';
 import { Suspense } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Tab() {
+export default function Index() {
+  const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
 
   const styles = StyleSheet.create({
     container: {
@@ -15,9 +19,7 @@ export default function Tab() {
 
   return (
     <View style={styles.container}>
-      <Suspense fallback={<Text>Loading...</Text>}>
-        <Text>placeholder text for settings</Text>
-      </Suspense>
+      <Text>placeholder text for settings</Text>
     </View>
   );
 };
