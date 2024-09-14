@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ShopperLister",
-    "slug": "shopperlister",
+    "slug": "ShopperLister",
     "scheme": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
