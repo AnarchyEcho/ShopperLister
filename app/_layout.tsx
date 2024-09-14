@@ -5,25 +5,27 @@ import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useEffect } from 'react';
 import { ISettings } from '@/interfaces';
 import { Header } from '@/components';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
-import { settingsAtom } from '@/atoms';
+import { selectedPageAtom, settingsAtom } from '@/atoms';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 
 export default function RootLayout() {
   const [settings, setSettings] = useAtom<ISettings | undefined>(settingsAtom as any);
+  const [_, setPage] = useAtom<string>(selectedPageAtom);
 
   useEffect(() => {
     db.execAsync(`
       PRAGMA journal_mode = WAL;
-      create table if not exists toc (id INTEGER PRIMARY KEY UNIQUE NOT NULL, tableName text UNIQUE, type text);
+      create table if not exists toc (id INTEGER PRIMARY KEY UNIQUE NOT NULL, tableName text UNIQUE, type text, selected text, pickedList text UNIQUE);
       create table if not exists settings (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text UNIQUE, value text);
       insert or ignore into settings values (null, "chosenTheme", "dark");
       insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE","headerBackground":"#FEFEFE","headerColor":"#000000"},"light":{"background":"#FEFEFE","color":"#000000","headerBackground":"#FEFEFE","headerColor":"#000000"}}');
-      insert or ignore into toc values (null, "settings", "settings");
+      insert or ignore into toc values (null, "settings", "settings", "false", null);
       create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
-      insert or ignore into toc values (null, "list_1", "shoppingList");
+      insert or ignore into toc values (null, "home", "listView", "true", "list_1");
+      insert or ignore into toc values (null, "lists", "listsOverview", "false", null);
     `);
     async function getSettings() {
       try {
@@ -39,6 +41,17 @@ export default function RootLayout() {
       }
     };
     getSettings();
+    async function getPage() {
+      try {
+        const res = await db.getFirstAsync('select * from toc where selected = "true"') as any;
+        setPage(res.tableName === 'home' ? res.pickedList : res.tableName);
+        router.replace(res.tableName === 'home' ? '/' : res.tableName);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    getPage();
   }, []);
 
   const styles = StyleSheet.create({
@@ -62,9 +75,9 @@ export default function RootLayout() {
         />
         <Header />
         <Stack>
-          <Stack.Screen name='index' options={{ headerShown: false }} />
-          <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right' }} />
-          <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left' }} />
+          <Stack.Screen name='index' options={{ headerShown: false, animationDuration: 200 }} />
+          <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 200 }} />
+          <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 200 }} />
         </Stack>
       </sqlite.SQLiteProvider>
     </View>

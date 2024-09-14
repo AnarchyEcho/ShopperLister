@@ -1,7 +1,6 @@
 import { settingsAtom } from '@/atoms';
 import { ISettings } from '@/interfaces';
 import { useAtom } from 'jotai';
-import { Suspense } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 export default function Index() {
@@ -10,16 +9,16 @@ export default function Index() {
   const styles = StyleSheet.create({
     container: {
       height: '100%',
-      backgroundColor: '#232323',
+      backgroundColor: settings?.theme ? settings?.theme[settings?.chosenTheme].background : '#232323',
     },
     text: {
-      color: '#FEFEFE',
+      color: settings?.theme ? settings?.theme[settings?.chosenTheme].color : '#FEFEFE',
     },
   });
 
   return (
     <View style={styles.container}>
-      <Text>placeholder text for list of lists</Text>
+      <Text style={styles.text}>placeholder text for list of lists</Text>
     </View>
   );
 };

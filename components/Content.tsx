@@ -26,7 +26,7 @@ export const Content = (props: IProps) => {
 
   return (
     <View style={styles.content}>
-      <Text>placeholder text for items list</Text>
+      <Text style={styles.text}>placeholder text for items list</Text>
     </View>
   );
 };
