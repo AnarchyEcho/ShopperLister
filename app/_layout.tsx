@@ -26,6 +26,7 @@ export default function RootLayout() {
       create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
       insert or ignore into toc values (null, "home", "listView", "true", "list_1");
       insert or ignore into toc values (null, "lists", "listsOverview", "false", null);
+      insert or ignore into toc values (null, "list_1", "shoppingList", null, null);
     `);
     async function getSettings() {
       try {
