@@ -9,4 +9,6 @@ export interface ISettings {
 interface ITheme {
   color: string
   background: string
+  headerBackground: string
+  headerColor: string
 }

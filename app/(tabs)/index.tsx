@@ -4,6 +4,7 @@ import * as sqlite from 'expo-sqlite';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { Suspense, useEffect, useState } from 'react';
 import { ISettings } from '@/interfaces';
+import { Content, Header } from '@/components';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 
@@ -16,7 +17,7 @@ export default function Index() {
       create table if not exists toc (id INTEGER PRIMARY KEY UNIQUE NOT NULL, tableName text UNIQUE, type text);
       create table if not exists settings (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text UNIQUE, value text);
       insert or ignore into settings values (null, "chosenTheme", "dark");
-      insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE"},"light":{"background":"#FEFEFE","color":"#000000"}}');
+      insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE","headerBackground":"#FEFEFE","headerColor":"#000000"},"light":{"background":"#FEFEFE","color":"#000000","headerBackground":"#FEFEFE","headerColor":"#000000"}}');
       insert or ignore into toc values (null, "settings", "settings");
       create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
       insert or ignore into toc values (null, "list_1", "shoppingList");
@@ -52,8 +53,13 @@ export default function Index() {
     <View style={styles.container}>
       <Suspense fallback={<Text>Loading...</Text>}>
         <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
-          <StatusBar style={settings?.chosenTheme} />
-          <Text style={styles.text}>{settings?.chosenTheme ? settings?.chosenTheme : 'Loading...'}</Text>
+          <StatusBar
+            style={settings?.chosenTheme === 'dark' ? 'light' : 'dark'}
+            backgroundColor={settings?.theme ? settings?.theme[settings?.chosenTheme].background : '#232323'}
+            translucent={false}
+          />
+          <Header settings={settings} />
+          <Content settings={settings} />
         </sqlite.SQLiteProvider>
       </Suspense>
     </View>
