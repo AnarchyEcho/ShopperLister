@@ -10,7 +10,7 @@ export const Header = () => {
   const db = useSQLiteContext();
   const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
   const [page, setPage] = useAtom<string>(selectedPageAtom);
-  const [list] = useAtom<string>(selectedListAtom);
+  const [pickedList] = useAtom<string>(selectedListAtom);
 
   const styles = StyleSheet.create({
     header: {
@@ -39,7 +39,7 @@ export const Header = () => {
 
   const pressHandler = async (nextPage: string, home: boolean) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    home ? setPage(list) : setPage(nextPage);
+    home ? setPage(pickedList) : setPage(nextPage);
     await db.runAsync('update toc set selected = "false" where selected = "true"');
     await db.runAsync(`update toc set selected = "true" where tableName = "${nextPage}"`);
   };

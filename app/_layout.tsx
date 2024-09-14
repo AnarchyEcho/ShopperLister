@@ -21,7 +21,7 @@ export default function RootLayout() {
       create table if not exists toc (id INTEGER PRIMARY KEY UNIQUE NOT NULL, tableName text UNIQUE, type text, selected text, pickedList text UNIQUE);
       create table if not exists settings (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text UNIQUE, value text);
       insert or ignore into settings values (null, "chosenTheme", "dark");
-      insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE","headerBackground":"#FEFEFE","headerColor":"#000000"},"light":{"background":"#FEFEFE","color":"#000000","headerBackground":"#FEFEFE","headerColor":"#000000"}}');
+      insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE","headerBackground":"#FFA500","headerColor":"#000000"},"light":{"background":"#FEFEFE","color":"#000000","headerBackground":"#FFA500","headerColor":"#000000"}}');
       insert or ignore into toc values (null, "settings", "settings", "false", null);
       create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
       insert or ignore into toc values (null, "home", "listView", "true", "list_1");
