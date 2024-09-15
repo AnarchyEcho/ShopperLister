@@ -19,7 +19,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Content settings={settings} />
+      <Content />
     </View>
   );
 }

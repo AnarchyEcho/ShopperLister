@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import * as sqlite from 'expo-sqlite';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useEffect } from 'react';
@@ -7,13 +7,14 @@ import { ISettings } from '@/interfaces';
 import { Header } from '@/components';
 import { router, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
-import { selectedPageAtom, settingsAtom } from '@/atoms';
+import { selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 
 export default function RootLayout() {
   const [settings, setSettings] = useAtom<ISettings | undefined>(settingsAtom as any);
   const [_, setPage] = useAtom<string>(selectedPageAtom);
+  const [__, setPickedList] = useAtom<string>(selectedListAtom);
 
   useEffect(() => {
     db.execAsync(`
@@ -44,6 +45,9 @@ export default function RootLayout() {
     getSettings();
     async function getPage() {
       try {
+        const picked = await db.getFirstAsync('select pickedList from toc where pickedList is not NULL') as any;
+        setPickedList(picked.pickedList);
+
         const res = await db.getFirstAsync('select * from toc where selected = "true"') as any;
         setPage(res.tableName === 'home' ? res.pickedList : res.tableName);
         router.replace(res.tableName === 'home' ? '/' : res.tableName);
@@ -67,7 +71,7 @@ export default function RootLayout() {
 
   useDrizzleStudio(db);
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
         <StatusBar
           style={settings?.chosenTheme === 'dark' ? 'light' : 'dark'}
@@ -81,6 +85,6 @@ export default function RootLayout() {
           <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 200 }} />
         </Stack>
       </sqlite.SQLiteProvider>
-    </View>
+    </SafeAreaView>
   );
 }

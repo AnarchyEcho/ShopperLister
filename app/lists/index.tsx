@@ -1,14 +1,16 @@
-import { listsOverviewAtom, settingsAtom } from '@/atoms';
-import { ISettings } from '@/interfaces';
+import { listsOverviewAtom, selectedListAtom, settingsAtom } from '@/atoms';
+import { ListItem } from '@/components';
+import { IList, ISettings } from '@/interfaces';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 
 export default function Index() {
   const db = useSQLiteContext();
   const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
-  const [listsOverview, setListsOverview] = useAtom<string[] | undefined>(listsOverviewAtom as any);
+  const [listsOverview, setListsOverview] = useAtom<IList[] | undefined>(listsOverviewAtom as any);
+  const [pickedList, setPickedList] = useAtom<string>(selectedListAtom);
 
   useEffect(() => {
     async function getLists() {
@@ -17,8 +19,8 @@ export default function Index() {
           if (typeof row === 'undefined') {
             return null;
           }
-          if (!listsOverview?.includes(row.tableName)) {
-            setListsOverview((old: any) => (old !== undefined ? [...old, row.tableName] : [row.tableName]));
+          if (!listsOverview?.find(x => x.tableName === row.tableName)) {
+            setListsOverview((old: any) => (old !== undefined ? [...old, row] : [row]));
           }
         }
       }
@@ -40,14 +42,22 @@ export default function Index() {
   });
 
   return (
-    <View style={styles.container}>
-      {listsOverview?.map((listItem, i) => {
+    <FlatList
+      style={styles.container}
+      data={listsOverview}
+      renderItem={({ item }) => {
         return (
-          <Text style={styles.text} key={listItem + i}>
-            {listItem}
-          </Text>
+          <ListItem
+            name={item.tableName}
+            pickedList={pickedList.toLowerCase()}
+            key={item.tableName}
+            onClick={async () => {
+              setPickedList(item.tableName);
+              db.runAsync(`update toc set pickedList = "${item.tableName}" where tableName = "home";`);
+            }}
+          />
         );
-      })}
-    </View>
+      }}
+    />
   );
 };
