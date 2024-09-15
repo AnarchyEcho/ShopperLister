@@ -23,6 +23,7 @@ export default function cogModal() {
       width: '80%',
       borderRadius: 10,
       backgroundColor: settings?.theme ? settings?.theme[settings?.chosenTheme].modalBackground : '#404040',
+      elevation: 10,
     },
     text: {
       color: settings?.theme ? settings?.theme[settings?.chosenTheme].modalColor : '#000000',
@@ -70,6 +71,8 @@ export default function cogModal() {
             {params.itemName}
           </Text>
         </View>
+
+
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.button}
