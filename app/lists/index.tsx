@@ -1,16 +1,18 @@
-import { listsOverviewAtom, selectedListAtom, settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, settingsAtom } from '@/atoms';
 import { ListItem } from '@/components';
 import { IList, ISettings } from '@/interfaces';
+import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, View } from 'react-native';
 
 export default function Index() {
   const db = useSQLiteContext();
   const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
   const [listsOverview, setListsOverview] = useAtom<IList[] | undefined>(listsOverviewAtom as any);
   const [pickedList, setPickedList] = useAtom<string>(selectedListAtom);
+  const [_, setModalVisible] = useAtom<boolean>(cogModalVisibleAtom);
 
   useEffect(() => {
     async function getLists() {
@@ -42,25 +44,33 @@ export default function Index() {
   });
 
   return (
-    <FlatList
-      style={styles.container}
-      data={listsOverview}
-      renderItem={({ item }) => {
-        return (
-          <ListItem
-            name={item.tableName}
-            pickedList={pickedList.toLowerCase()}
-            key={item.tableName}
-            onClick={async () => {
-              setPickedList(item.tableName);
-              db.runAsync(`update toc set pickedList = "${item.tableName}" where tableName = "home";`);
-            }}
-            cogPress={() => {
-              console.log('pressed cog');
-            }}
-          />
-        );
-      }}
-    />
+    <View>
+      <FlatList
+        style={styles.container}
+        data={listsOverview}
+        renderItem={({ item }) => {
+          return (
+            <ListItem
+              name={item.tableName}
+              pickedList={pickedList.toLowerCase()}
+              key={item.tableName}
+              onClick={async () => {
+                setPickedList(item.tableName);
+                db.runAsync(`update toc set pickedList = "${item.tableName}" where tableName = "home";`);
+              }}
+              cogPress={() => {
+                setModalVisible(true);
+                router.navigate({
+                  pathname: '/cogModal',
+                  params: {
+                    itemName: item.tableName,
+                  },
+                });
+              }}
+            />
+          );
+        }}
+      />
+    </View>
   );
 };

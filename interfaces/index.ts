@@ -11,6 +11,9 @@ interface ITheme {
   background: string
   headerBackground: string
   headerColor: string
+  modalColor: string
+  modalBackground: string
+  modalTrim: string
   listCogColor: string
   listItemTextColor: string
   listItemBackgroundColor: string

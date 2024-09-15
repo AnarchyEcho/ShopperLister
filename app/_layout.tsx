@@ -7,7 +7,7 @@ import { ISettings } from '@/interfaces';
 import { Header } from '@/components';
 import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
-import { selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 SplashScreen.preventAutoHideAsync();
@@ -16,6 +16,7 @@ export default function RootLayout() {
   const [settings, setSettings] = useAtom<ISettings | undefined>(settingsAtom as any);
   const [_, setPage] = useAtom<string>(selectedPageAtom);
   const [pickedList, setPickedList] = useAtom<string>(selectedListAtom);
+  const [modalVisible, setModalVisible] = useAtom<boolean>(cogModalVisibleAtom);
 
   const initConfig: ISettings['theme'] = {
     dark: {
@@ -26,6 +27,9 @@ export default function RootLayout() {
       listCogColor: '#FFA500',
       listItemTextColor: '#FEFEFE',
       listItemBackgroundColor: '#303030',
+      modalBackground: '#404040',
+      modalColor: '#000000',
+      modalTrim: '#FFA500',
     },
     light: {
       background: '#FEFEFE',
@@ -35,6 +39,9 @@ export default function RootLayout() {
       listCogColor: '#FFA500',
       listItemTextColor: '#FEFEFE',
       listItemBackgroundColor: '#303030',
+      modalBackground: '#404040',
+      modalColor: '#000000',
+      modalTrim: '#FFA500',
     },
   };
 
@@ -99,6 +106,10 @@ export default function RootLayout() {
       if (res.tableName === 'home') {
         BackHandler.exitApp();
       }
+      else if (modalVisible) {
+        setModalVisible(false);
+        router.back();
+      }
       else {
         setPage(pickedList);
         await db.runAsync('update toc set selected = "false" where selected = "true"');
@@ -123,6 +134,7 @@ export default function RootLayout() {
         <Header />
         <Stack>
           <Stack.Screen name='index' options={{ headerShown: false, animationDuration: 100 }} />
+          <Stack.Screen name='cogModal' options={{ headerShown: false, animation: 'fade', animationDuration: 100, presentation: 'transparentModal' }} />
           <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 100 }} />
           <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 100 }} />
         </Stack>

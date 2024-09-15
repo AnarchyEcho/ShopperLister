@@ -4,3 +4,4 @@ export const settingsAtom = atom();
 export const selectedPageAtom = atom('ShopperLister');
 export const listsOverviewAtom = atom();
 export const selectedListAtom = atom('');
+export const cogModalVisibleAtom = atom(false);

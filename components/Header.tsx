@@ -1,9 +1,9 @@
 import { ISettings } from '@/interfaces';
 import { View, Text, StyleSheet } from 'react-native';
 import { Entypo, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useAtom } from 'jotai';
-import { selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
 import { useSQLiteContext } from 'expo-sqlite';
 
 export const Header = () => {
@@ -11,6 +11,7 @@ export const Header = () => {
   const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
   const [page, setPage] = useAtom<string>(selectedPageAtom);
   const [pickedList] = useAtom<string>(selectedListAtom);
+  const [modalVisible, setModalVisible] = useAtom<boolean>(cogModalVisibleAtom);
 
   const styles = StyleSheet.create({
     header: {
@@ -42,6 +43,10 @@ export const Header = () => {
   });
 
   const pressHandler = async (nextPage: string, home: boolean) => {
+    if (modalVisible) {
+      router.back();
+      setModalVisible(false);
+    }
     home ? setPage(pickedList) : setPage(nextPage);
     await db.runAsync('update toc set selected = "false" where selected = "true"');
     await db.runAsync(`update toc set selected = "true" where tableName = "${nextPage}"`);
