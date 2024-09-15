@@ -11,6 +11,9 @@ interface ITheme {
   background: string
   headerBackground: string
   headerColor: string
+  listCogColor: string
+  listItemTextColor: string
+  listItemBackgroundColor: string
 }
 
 export interface IList {

@@ -55,6 +55,9 @@ export default function Index() {
               setPickedList(item.tableName);
               db.runAsync(`update toc set pickedList = "${item.tableName}" where tableName = "home";`);
             }}
+            cogPress={() => {
+              console.log('pressed cog');
+            }}
           />
         );
       }}

@@ -1,20 +1,42 @@
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { BackHandler, SafeAreaView, StyleSheet } from 'react-native';
 import * as sqlite from 'expo-sqlite';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useEffect } from 'react';
 import { ISettings } from '@/interfaces';
 import { Header } from '@/components';
-import { router, Stack } from 'expo-router';
+import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
 import { selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [settings, setSettings] = useAtom<ISettings | undefined>(settingsAtom as any);
   const [_, setPage] = useAtom<string>(selectedPageAtom);
-  const [__, setPickedList] = useAtom<string>(selectedListAtom);
+  const [pickedList, setPickedList] = useAtom<string>(selectedListAtom);
+
+  const initConfig: ISettings['theme'] = {
+    dark: {
+      background: '#232323',
+      color: '#FEFEFE',
+      headerBackground: '#FFA500',
+      headerColor: '#000000',
+      listCogColor: '#FFA500',
+      listItemTextColor: '#FEFEFE',
+      listItemBackgroundColor: '#303030',
+    },
+    light: {
+      background: '#FEFEFE',
+      color: '#000000',
+      headerBackground: '#FFA500',
+      headerColor: '#000000',
+      listCogColor: '#FFA500',
+      listItemTextColor: '#FEFEFE',
+      listItemBackgroundColor: '#303030',
+    },
+  };
 
   useEffect(() => {
     db.execAsync(`
@@ -22,7 +44,7 @@ export default function RootLayout() {
       create table if not exists toc (id INTEGER PRIMARY KEY UNIQUE NOT NULL, tableName text UNIQUE, type text, selected text, pickedList text UNIQUE);
       create table if not exists settings (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text UNIQUE, value text);
       insert or ignore into settings values (null, "chosenTheme", "dark");
-      insert or ignore into settings values (null, "theme", '{"dark":{"background":"#232323","color":"#FEFEFE","headerBackground":"#FFA500","headerColor":"#000000"},"light":{"background":"#FEFEFE","color":"#000000","headerBackground":"#FFA500","headerColor":"#000000"}}');
+      insert or ignore into settings values (null, "theme", '${JSON.stringify(initConfig)}');
       insert or ignore into toc values (null, "settings", "settings", "false", null);
       create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
       insert or ignore into toc values (null, "home", "listView", "true", "list_1");
@@ -50,7 +72,9 @@ export default function RootLayout() {
 
         const res = await db.getFirstAsync('select * from toc where selected = "true"') as any;
         setPage(res.tableName === 'home' ? res.pickedList : res.tableName);
+
         router.replace(res.tableName === 'home' ? '/' : res.tableName);
+        setTimeout(SplashScreen.hideAsync, 400);
       }
       catch (error) {
         console.log(error);
@@ -68,6 +92,24 @@ export default function RootLayout() {
       color: settings?.theme ? settings?.theme[settings?.chosenTheme].color : '#FEFEFE',
     },
   });
+
+  const handleBackBtn = () => {
+    async function realBackHandler() {
+      const res = await db.getFirstAsync('select * from toc where selected = "true"') as any;
+      if (res.tableName === 'home') {
+        BackHandler.exitApp();
+      }
+      else {
+        setPage(pickedList);
+        await db.runAsync('update toc set selected = "false" where selected = "true"');
+        await db.runAsync('update toc set selected = "true" where tableName = "home"');
+        router.navigate('/');
+      }
+    }
+    realBackHandler();
+    return true;
+  };
+  BackHandler.addEventListener('hardwareBackPress', handleBackBtn);
 
   useDrizzleStudio(db);
   return (
