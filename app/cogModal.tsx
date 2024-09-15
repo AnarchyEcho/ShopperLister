@@ -178,6 +178,7 @@ export default function cogModal() {
           <Controller
             name='name'
             control={control}
+            rules={{ maxLength: 30 }}
             render={({ field: { onChange, onBlur, value } }) => {
               return (
                 <View style={styles.formWrapper}>
@@ -188,6 +189,7 @@ export default function cogModal() {
                     onChangeText={onChange}
                     value={value}
                     style={styles.formInput}
+                    maxLength={17}
                   />
                   <TouchableOpacity
                     style={styles.formSubmit}
