@@ -13,10 +13,10 @@ const db = sqlite.openDatabaseSync('ShopperListerDB');
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [settings, setSettings] = useAtom<ISettings | undefined>(settingsAtom as any);
-  const [_, setPage] = useAtom<string>(selectedPageAtom);
-  const [pickedList, setPickedList] = useAtom<string>(selectedListAtom);
-  const [modalVisible, setModalVisible] = useAtom<boolean>(cogModalVisibleAtom);
+  const [settings, setSettings] = useAtom(settingsAtom);
+  const [_, setPage] = useAtom(selectedPageAtom);
+  const [pickedList, setPickedList] = useAtom(selectedListAtom);
+  const [modalVisible, setModalVisible] = useAtom(cogModalVisibleAtom);
 
   const initConfig: ISettings['theme'] = {
     dark: {
@@ -30,6 +30,7 @@ export default function RootLayout() {
       modalBackground: '#404040',
       modalColor: '#000000',
       modalTrim: '#FFA500',
+      modalDisabled: '#767676',
     },
     light: {
       background: '#FEFEFE',
@@ -42,6 +43,7 @@ export default function RootLayout() {
       modalBackground: '#404040',
       modalColor: '#000000',
       modalTrim: '#FFA500',
+      modalDisabled: '#767676',
     },
   };
 

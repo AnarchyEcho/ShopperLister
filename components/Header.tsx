@@ -1,4 +1,3 @@
-import { ISettings } from '@/interfaces';
 import { View, Text, StyleSheet } from 'react-native';
 import { Entypo, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
@@ -8,10 +7,10 @@ import { useSQLiteContext } from 'expo-sqlite';
 
 export const Header = () => {
   const db = useSQLiteContext();
-  const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
-  const [page, setPage] = useAtom<string>(selectedPageAtom);
-  const [pickedList] = useAtom<string>(selectedListAtom);
-  const [modalVisible, setModalVisible] = useAtom<boolean>(cogModalVisibleAtom);
+  const [settings] = useAtom(settingsAtom);
+  const [page, setPage] = useAtom(selectedPageAtom);
+  const [pickedList] = useAtom(selectedListAtom);
+  const [modalVisible, setModalVisible] = useAtom(cogModalVisibleAtom);
 
   const styles = StyleSheet.create({
     header: {

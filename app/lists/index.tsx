@@ -1,6 +1,6 @@
 import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, settingsAtom } from '@/atoms';
 import { ListItem } from '@/components';
-import { IList, ISettings } from '@/interfaces';
+import { IList } from '@/interfaces';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
@@ -9,10 +9,10 @@ import { StyleSheet, FlatList, View } from 'react-native';
 
 export default function Index() {
   const db = useSQLiteContext();
-  const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
-  const [listsOverview, setListsOverview] = useAtom<IList[] | undefined>(listsOverviewAtom as any);
-  const [pickedList, setPickedList] = useAtom<string>(selectedListAtom);
-  const [_, setModalVisible] = useAtom<boolean>(cogModalVisibleAtom);
+  const [settings] = useAtom(settingsAtom);
+  const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
+  const [pickedList, setPickedList] = useAtom(selectedListAtom);
+  const [_, setModalVisible] = useAtom(cogModalVisibleAtom);
 
   useEffect(() => {
     async function getLists() {
@@ -21,8 +21,8 @@ export default function Index() {
           if (typeof row === 'undefined') {
             return null;
           }
-          if (!listsOverview?.find(x => x.tableName === row.tableName)) {
-            setListsOverview((old: any) => (old !== undefined ? [...old, row] : [row]));
+          if (!listsOverview?.has(row)) {
+            setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
           }
         }
       }
@@ -47,7 +47,7 @@ export default function Index() {
     <View>
       <FlatList
         style={styles.container}
-        data={listsOverview}
+        data={listsOverview !== undefined ? Array.from(listsOverview as Set<IList>) : undefined}
         renderItem={({ item }) => {
           return (
             <ListItem

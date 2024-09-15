@@ -1,5 +1,4 @@
 import { settingsAtom } from '@/atoms';
-import { ISettings } from '@/interfaces';
 import { MaterialIcons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { useAtom } from 'jotai';
@@ -21,7 +20,7 @@ export const ListItem = (props: IProps) => {
     amount,
     pickedList,
   } = props;
-  const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
+  const [settings] = useAtom(settingsAtom);
 
   const styles = StyleSheet.create({
     icon: {

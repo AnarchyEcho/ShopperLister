@@ -1,10 +1,9 @@
 import { settingsAtom } from '@/atoms';
-import { ISettings } from '@/interfaces';
 import { useAtom } from 'jotai';
 import { View, Text, StyleSheet } from 'react-native';
 
 export default function Index() {
-  const [settings] = useAtom<ISettings | undefined>(settingsAtom as any);
+  const [settings] = useAtom(settingsAtom);
 
   const styles = StyleSheet.create({
     container: {
