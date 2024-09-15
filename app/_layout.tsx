@@ -80,9 +80,9 @@ export default function RootLayout() {
         />
         <Header />
         <Stack>
-          <Stack.Screen name='index' options={{ headerShown: false, animationDuration: 200 }} />
-          <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 200 }} />
-          <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 200 }} />
+          <Stack.Screen name='index' options={{ headerShown: false, animationDuration: 100 }} />
+          <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 100 }} />
+          <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 100 }} />
         </Stack>
       </sqlite.SQLiteProvider>
     </SafeAreaView>
