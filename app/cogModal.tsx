@@ -117,42 +117,38 @@ export default function cogModal() {
     router.back();
   };
 
-  const onSubmit = handleSubmit(async (data) => {
-    if (page === 'lists') {
-      setListsOverview(undefined);
-      await db.runAsync(`alter table ${params.itemName} rename to ${data.name}`);
-      await db.runAsync(`update or ignore toc set tableName = "${data.name}" where tableName = "${params.itemName}"`);
-      await db.runAsync(`update or ignore toc set pickedList = "${data.name}" where tableName = "home"`);
-      for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
-        if (typeof row === 'undefined') {
-          return null;
-        }
-        if (!listsOverview?.has(row.tableName)) {
-          setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
-        }
+  const updateListsOverview = async () => {
+    setListsOverview(undefined);
+    for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
+      if (typeof row === 'undefined') {
+        return null;
+      }
+      if (!listsOverview?.has(row.tableName)) {
+        setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
       }
     }
-    if (pickedList === name) {
-      setPickedList(data.name);
+  };
+
+  const onSubmit = handleSubmit(async (data) => {
+    if (page === 'lists') {
+      await db.runAsync(`alter table ${name} rename to ${data.name}`);
+      await db.runAsync(`update or ignore toc set tableName = "${data.name}" where tableName = "${name}"`);
+      await db.runAsync(`update or ignore toc set pickedList = "${data.name}" where tableName = "home"`);
+      await updateListsOverview();
+      if (pickedList === name) {
+        setPickedList(data.name);
+      }
     }
     setName(data.name);
   });
 
   const onDelete = handleSubmit(async () => {
     if (page === 'lists') {
-      setListsOverview(undefined);
       const firstList = await db.getFirstAsync('select tableName from toc where type = "shoppingList"') as any;
       await db.runAsync(`update or ignore toc set pickedList = "${firstList.tableName}" where tableName = "home"`);
       await db.runAsync(`delete from toc where tableName = "${name}"`);
       await db.runAsync(`drop table ${name}`);
-      for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
-        if (typeof row === 'undefined') {
-          return null;
-        }
-        if (!listsOverview?.has(row.tableName)) {
-          setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
-        }
-      }
+      await updateListsOverview();
       if (pickedList === name) {
         setPickedList(firstList.tableName);
       }
