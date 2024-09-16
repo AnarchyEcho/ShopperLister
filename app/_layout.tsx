@@ -4,7 +4,7 @@ import * as sqlite from 'expo-sqlite';
 import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
 import { useEffect } from 'react';
 import { ISettings } from '@/interfaces';
-import { Header } from '@/components';
+import { Header, AddItem } from '@/components';
 import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
 import { cogModalVisibleAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
@@ -14,7 +14,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [settings, setSettings] = useAtom(settingsAtom);
-  const [_, setPage] = useAtom(selectedPageAtom);
+  const [page, setPage] = useAtom(selectedPageAtom);
   const [pickedList, setPickedList] = useAtom(selectedListAtom);
   const [modalVisible, setModalVisible] = useAtom(cogModalVisibleAtom);
 
@@ -140,6 +140,7 @@ export default function RootLayout() {
           <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 100 }} />
           <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 100 }} />
         </Stack>
+        {(page !== 'settings' && !modalVisible) && <AddItem />}
       </sqlite.SQLiteProvider>
     </SafeAreaView>
   );

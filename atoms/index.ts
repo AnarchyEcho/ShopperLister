@@ -6,3 +6,4 @@ export const selectedPageAtom = atom<string>('ShopperLister');
 export const listsOverviewAtom = atom<Set<IList> | undefined>();
 export const selectedListAtom = atom<string>('');
 export const cogModalVisibleAtom = atom<boolean>(false);
+export const addItemOpenAtom = atom<boolean>(false);

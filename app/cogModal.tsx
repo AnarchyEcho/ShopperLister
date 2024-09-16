@@ -178,7 +178,7 @@ export default function cogModal() {
           <Controller
             name='name'
             control={control}
-            rules={{ maxLength: 30 }}
+            rules={{ maxLength: 30, minLength: 1 }}
             render={({ field: { onChange, onBlur, value } }) => {
               return (
                 <View style={styles.formWrapper}>
@@ -202,7 +202,7 @@ export default function cogModal() {
             }}
           />
           <View style={styles.formWrapper}>
-            <Text style={styles.formText}>Delete list {`${del}`}</Text>
+            <Text style={styles.formText}>Delete list</Text>
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.formSubmit, { right: 100 }]}

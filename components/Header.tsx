@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Keyboard } from 'react-native';
 import { Entypo, FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
 import { useAtom } from 'jotai';
-import { cogModalVisibleAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { addItemOpenAtom, cogModalVisibleAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
 import { useSQLiteContext } from 'expo-sqlite';
 
 export const Header = () => {
@@ -11,6 +11,7 @@ export const Header = () => {
   const [page, setPage] = useAtom(selectedPageAtom);
   const [pickedList] = useAtom(selectedListAtom);
   const [modalVisible, setModalVisible] = useAtom(cogModalVisibleAtom);
+  const [addItemOpen, setAddItemOpen] = useAtom(addItemOpenAtom);
 
   const styles = StyleSheet.create({
     header: {
@@ -46,6 +47,10 @@ export const Header = () => {
       router.back();
       setModalVisible(false);
     }
+    if (addItemOpen) {
+      setAddItemOpen(false);
+    }
+    Keyboard.dismiss();
     home ? setPage(pickedList) : setPage(nextPage);
     await db.runAsync('update toc set selected = "false" where selected = "true"');
     await db.runAsync(`update toc set selected = "true" where tableName = "${nextPage}"`);
