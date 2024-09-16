@@ -14,7 +14,7 @@ interface IForm {
 export const AddItem = () => {
   const db = useSQLiteContext();
   const [settings] = useAtom(settingsAtom);
-  const [pickedList, setPickedList] = useAtom(selectedListAtom);
+  const [pickedList] = useAtom(selectedListAtom);
   const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
   const [page] = useAtom(selectedPageAtom);
   const [open, setOpen] = useAtom(addItemOpenAtom);
