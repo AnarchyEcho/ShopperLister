@@ -1,5 +1,5 @@
 import { cogModalVisibleAtom, selectedListAtom, settingsAtom, shoppingListAtom } from '@/atoms';
-import { IList, IShoppingList } from '@/interfaces';
+import { IShoppingList } from '@/interfaces';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
