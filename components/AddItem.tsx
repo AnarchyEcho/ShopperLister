@@ -1,4 +1,4 @@
-import { addItemOpenAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { addItemOpenAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
@@ -15,6 +15,7 @@ export const AddItem = () => {
   const db = useSQLiteContext();
   const [settings] = useAtom(settingsAtom);
   const [pickedList, setPickedList] = useAtom(selectedListAtom);
+  const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
   const [page] = useAtom(selectedPageAtom);
   const [open, setOpen] = useAtom(addItemOpenAtom);
   const { control, handleSubmit, reset, formState: { errors } } = useForm<IForm>({
@@ -97,14 +98,28 @@ export const AddItem = () => {
     },
   });
 
+  const updateListsOverview = async () => {
+    setListsOverview(undefined);
+    for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
+      if (typeof row === 'undefined') {
+        return null;
+      }
+      if (!listsOverview?.has(row.tableName)) {
+        setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
+      }
+    }
+  };
+
   const onSubmit = handleSubmit(async (data) => {
     if (page === 'lists') {
-      console.log(data.name);
+      await db.runAsync(`insert or ignore into toc values (null, "${data.name}", "shoppingList", null, null)`);
+      await db.runAsync(`create table if not exists ${data.name} (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text)`);
+      await updateListsOverview();
       Keyboard.dismiss();
       reset();
     }
     else {
-      console.log(data);
+      await db.runAsync(`insert or ignore into ${pickedList} values (null, "${data.name}", "${data.amount}", "false")`);
       Keyboard.dismiss();
       reset();
     }
@@ -145,7 +160,7 @@ export const AddItem = () => {
               Please fill in all the fields.
             </Text>}
             {(errors.amount?.type || errors.name?.type) === 'pattern' && <Text style={styles.errorText}>
-              Only valid characters allowed. ({errors.amount && `Amount${errors.name ? ', ' : ''}`}{errors.name && 'Name'})
+              Only valid characters allowed. {errors.name && `(Name, allowed: - _ )${errors.amount ? ', ' : ''}`}{errors.amount && 'Amount'}
             </Text>}
             <Controller
               name='name'
