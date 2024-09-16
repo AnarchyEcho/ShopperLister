@@ -1,4 +1,5 @@
-import { addItemOpenAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { addItemOpenAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
+import { updateListsOverview, updateShoppingList } from '@/utils';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
@@ -15,6 +16,7 @@ export const AddItem = () => {
   const db = useSQLiteContext();
   const [settings] = useAtom(settingsAtom);
   const [pickedList] = useAtom(selectedListAtom);
+  const [shoppingList, setShoppingList] = useAtom(shoppingListAtom);
   const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
   const [page] = useAtom(selectedPageAtom);
   const [open, setOpen] = useAtom(addItemOpenAtom);
@@ -98,28 +100,18 @@ export const AddItem = () => {
     },
   });
 
-  const updateListsOverview = async () => {
-    setListsOverview(undefined);
-    for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
-      if (typeof row === 'undefined') {
-        return null;
-      }
-      if (!listsOverview?.has(row.tableName)) {
-        setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
-      }
-    }
-  };
-
   const onSubmit = handleSubmit(async (data) => {
     if (page === 'lists') {
       await db.runAsync(`insert or ignore into toc values (null, "${data.name}", "shoppingList", null, null)`);
       await db.runAsync(`create table if not exists ${data.name} (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text)`);
-      await updateListsOverview();
+      updateListsOverview(db, listsOverview, setListsOverview);
       Keyboard.dismiss();
       reset();
+      setOpen(false);
     }
     else {
       await db.runAsync(`insert or ignore into ${pickedList} values (null, "${data.name}", "${data.amount}", "false")`);
+      updateShoppingList(db, shoppingList, setShoppingList, pickedList);
       Keyboard.dismiss();
       reset();
     }

@@ -1,4 +1,5 @@
-import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
+import { updateListsOverview, updateShoppingList } from '@/utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
@@ -8,6 +9,7 @@ import { Text, StyleSheet, TouchableOpacity, View, TextInput, Keyboard } from 'r
 
 interface IForm {
   name: string
+  amount: string
 }
 
 export default function cogModal() {
@@ -15,14 +17,17 @@ export default function cogModal() {
   const params = useLocalSearchParams();
   const [settings] = useAtom(settingsAtom);
   const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
+  const [shoppingList, setShoppingList] = useAtom(shoppingListAtom);
   const [pickedList, setPickedList] = useAtom(selectedListAtom);
   const [_, setModalVisible] = useAtom(cogModalVisibleAtom);
   const [page] = useAtom(selectedPageAtom);
   const [del, setDel] = useState(false);
   const [name, setName] = useState<string>(params.itemName as string);
+  const [amount, setAmount] = useState<string>(params.amount as string);
   const { control, handleSubmit, reset } = useForm<IForm>({
     defaultValues: {
       name: name,
+      amount: amount,
     },
   });
 
@@ -117,29 +122,22 @@ export default function cogModal() {
     router.back();
   };
 
-  const updateListsOverview = async () => {
-    setListsOverview(undefined);
-    for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
-      if (typeof row === 'undefined') {
-        return null;
-      }
-      if (!listsOverview?.has(row.tableName)) {
-        setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
-      }
-    }
-  };
-
   const onSubmit = handleSubmit(async (data) => {
     if (page === 'lists') {
       await db.runAsync(`alter table ${name} rename to ${data.name}`);
       await db.runAsync(`update or ignore toc set tableName = "${data.name}" where tableName = "${name}"`);
       await db.runAsync(`update or ignore toc set pickedList = "${data.name}" where tableName = "home"`);
-      await updateListsOverview();
+      updateListsOverview(db, listsOverview, setListsOverview);
       if (pickedList === name) {
         setPickedList(data.name);
       }
     }
     setName(data.name);
+    if (page === pickedList) {
+      setAmount(data.amount);
+      await db.runAsync(`update or ignore ${pickedList} set name = "${data.name}", amount = "${data.amount}" where name = "${name}"`);
+      updateShoppingList(db, shoppingList, setShoppingList, pickedList);
+    }
   });
 
   const onDelete = handleSubmit(async () => {
@@ -148,10 +146,14 @@ export default function cogModal() {
       await db.runAsync(`update or ignore toc set pickedList = "${firstList.tableName}" where tableName = "home"`);
       await db.runAsync(`delete from toc where tableName = "${name}"`);
       await db.runAsync(`drop table ${name}`);
-      await updateListsOverview();
+      updateListsOverview(db, listsOverview, setListsOverview);
       if (pickedList === name) {
         setPickedList(firstList.tableName);
       }
+    }
+    if (page === pickedList) {
+      await db.runAsync(`delete from ${pickedList} where name = "${name}"`);
+      updateShoppingList(db, shoppingList, setShoppingList, pickedList);
     }
     setDel(false);
     closeModal();
@@ -178,7 +180,7 @@ export default function cogModal() {
           <Controller
             name='name'
             control={control}
-            rules={{ maxLength: 30, minLength: 1 }}
+            rules={{ maxLength: amount ? 28 : 17, minLength: 1 }}
             render={({ field: { onChange, onBlur, value } }) => {
               return (
                 <View style={styles.formWrapper}>
@@ -189,7 +191,7 @@ export default function cogModal() {
                     onChangeText={onChange}
                     value={value}
                     style={styles.formInput}
-                    maxLength={17}
+                    maxLength={amount ? 28 : 17}
                   />
                   <TouchableOpacity
                     style={styles.formSubmit}
@@ -201,6 +203,42 @@ export default function cogModal() {
               );
             }}
           />
+          {amount &&
+            <Controller
+              name='amount'
+              control={control}
+              rules={{
+                minLength: 1,
+                maxLength: 5,
+                required: true,
+                pattern: /^[\d]+$/,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => {
+                return (
+                  <View style={styles.formWrapper}>
+                    <Text style={styles.formText}>Amount: </Text>
+                    <TextInput
+                      placeholder={'1'}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      style={[styles.formInput, { width: 50 }]}
+                      maxLength={5}
+                      keyboardType='number-pad'
+                      returnKeyType='done'
+                      onSubmitEditing={Keyboard.dismiss}
+                    />
+                    <TouchableOpacity
+                      style={styles.formSubmit}
+                      onPress={onSubmit}
+                    >
+                      <Text style={[styles.formText, styles.formSubmitText]}>Save</Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              }}
+            />
+          }
           <View style={styles.formWrapper}>
             <Text style={styles.formText}>Delete list</Text>
             <TouchableOpacity

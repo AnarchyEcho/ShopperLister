@@ -2,13 +2,14 @@ import { settingsAtom } from '@/atoms';
 import { MaterialIcons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { useAtom } from 'jotai';
-import { Text, StyleSheet, Pressable, View } from 'react-native';
+import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 
 interface IProps {
   name: string
   onClick: () => void
   cogPress: () => void
   amount?: string
+  checked?: string
   pickedList?: string
 }
 
@@ -19,6 +20,7 @@ export const ListItem = (props: IProps) => {
     cogPress,
     amount,
     pickedList,
+    checked,
   } = props;
   const [settings] = useAtom(settingsAtom);
 
@@ -42,6 +44,7 @@ export const ListItem = (props: IProps) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      backgroundColor: checked === 'true' ? '#01968950' : settings?.theme ? settings?.theme[settings?.chosenTheme].listItemBackgroundColor : '#303030',
     },
     text: {
       fontSize: 20,
@@ -69,17 +72,13 @@ export const ListItem = (props: IProps) => {
   });
 
   return (
-    <Pressable
-      style={({ pressed }) => [{
-        backgroundColor: pressed ?
-          settings?.theme ? `${settings?.theme[settings?.chosenTheme].listItemBackgroundColor}50` : '#30303050'
-          :
-          settings?.theme ? settings?.theme[settings?.chosenTheme].listItemBackgroundColor : '#303030',
-      },
-      styles.listItem]}
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={styles.listItem}
       onPress={onClick}
     >
-      <Pressable
+      <TouchableOpacity
+        activeOpacity={1}
         onPress={cogPress}
       >
         <MaterialIcons
@@ -89,7 +88,7 @@ export const ListItem = (props: IProps) => {
             styles.cog,
           ]}
         />
-      </Pressable>
+      </TouchableOpacity>
       <Text
         style={[
           styles.text,
@@ -108,11 +107,15 @@ export const ListItem = (props: IProps) => {
         </Text>}
       <View style={styles.boxWrapper}>
         <Checkbox
-          value={pickedList === name ? true : false}
+          value={amount ?
+            checked === 'true' ? true : false
+            :
+            pickedList === name ? true : false
+          }
           style={styles.checkbox}
           pointerEvents='none'
         />
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 };

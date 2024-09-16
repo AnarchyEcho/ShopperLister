@@ -1,20 +1,24 @@
-import { settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, selectedListAtom, settingsAtom, shoppingListAtom } from '@/atoms';
+import { IList, IShoppingList } from '@/interfaces';
+import { router } from 'expo-router';
+import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
+import { ListItem } from './ListItem';
+import { updateShoppingList } from '@/utils';
 
 export const Content = () => {
+  const db = useSQLiteContext();
   const [settings] = useAtom(settingsAtom);
+  const [shoppingList] = useAtom(shoppingListAtom);
+  const [pickedList] = useAtom(selectedListAtom);
+  const [_, setShoppingList] = useAtom(shoppingListAtom);
+  const [__, setModalVisible] = useAtom(cogModalVisibleAtom);
 
   const styles = StyleSheet.create({
-    content: {
-      width: '100%',
+    container: {
       height: '100%',
-      paddingTop: 10,
-      paddingBottom: 10,
-      paddingLeft: 5,
-      paddingRight: 5,
-      display: 'flex',
-      flexDirection: 'column',
+      backgroundColor: settings?.theme ? settings?.theme[settings?.chosenTheme].background : '#232323',
     },
     text: {
       color: settings?.theme ? settings?.theme[settings?.chosenTheme].color : '#FEFEFE',
@@ -22,8 +26,35 @@ export const Content = () => {
   });
 
   return (
-    <View style={styles.content}>
-      <Text style={styles.text}>placeholder text for items list</Text>
+    <View>
+      <FlatList
+        style={styles.container}
+        data={shoppingList !== undefined ? Array.from(shoppingList as Set<IShoppingList>) : undefined}
+        renderItem={({ item }) => {
+          return (
+            <ListItem
+              name={item.name}
+              amount={item.amount}
+              checked={item.checked}
+              key={item.name}
+              onClick={async () => {
+                db.runSync(`update or ignore ${pickedList} set checked = "${item.checked === 'true' ? 'false' : 'true'}" where name = "${item.name}"`);
+                updateShoppingList(db, shoppingList, setShoppingList, pickedList);
+              }}
+              cogPress={() => {
+                setModalVisible(true);
+                router.navigate({
+                  pathname: '/cogModal',
+                  params: {
+                    itemName: item.name,
+                    amount: item.amount,
+                  },
+                });
+              }}
+            />
+          );
+        }}
+      />
     </View>
   );
 };

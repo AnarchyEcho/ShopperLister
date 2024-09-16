@@ -7,7 +7,7 @@ import { ISettings } from '@/interfaces';
 import { Header, AddItem } from '@/components';
 import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
-import { cogModalVisibleAtom, selectedListAtom, selectedPageAtom, settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 SplashScreen.preventAutoHideAsync();
@@ -16,6 +16,8 @@ export default function RootLayout() {
   const [settings, setSettings] = useAtom(settingsAtom);
   const [page, setPage] = useAtom(selectedPageAtom);
   const [pickedList, setPickedList] = useAtom(selectedListAtom);
+  const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
+  const [_, setShoppingList] = useAtom(shoppingListAtom);
   const [modalVisible, setModalVisible] = useAtom(cogModalVisibleAtom);
 
   const initConfig: ISettings['theme'] = {
@@ -78,6 +80,35 @@ export default function RootLayout() {
       try {
         const picked = await db.getFirstAsync('select pickedList from toc where pickedList is not NULL') as any;
         setPickedList(picked.pickedList);
+
+        async function getShoppingList() {
+          setShoppingList(undefined);
+          try {
+            for await (const row of db.getEachAsync(`select name,amount,checked from ${picked.pickedList}`) as any) {
+              if (row === undefined) {
+                return;
+              }
+              setShoppingList((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
+            }
+          }
+          catch (error) {
+            console.log(error);
+          }
+        }
+        getShoppingList();
+
+        const getListsOverview = async () => {
+          setListsOverview(undefined);
+          for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
+            if (typeof row === 'undefined') {
+              return null;
+            }
+            if (!listsOverview?.has(row.tableName)) {
+              setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
+            }
+          }
+        };
+        getListsOverview();
 
         const res = await db.getFirstAsync('select * from toc where selected = "true"') as any;
         setPage(res.tableName === 'home' ? res.pickedList : res.tableName);

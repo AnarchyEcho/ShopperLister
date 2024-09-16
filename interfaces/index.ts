@@ -24,3 +24,9 @@ export interface IList {
   tableName: string
   pickedList: string
 }
+
+export interface IShoppingList {
+  name: string
+  amount: string
+  checked: string
+}

@@ -1,6 +1,7 @@
-import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, settingsAtom } from '@/atoms';
+import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, settingsAtom, shoppingListAtom } from '@/atoms';
 import { ListItem } from '@/components';
 import { IList } from '@/interfaces';
+import { updateListsOverview, updateShoppingList } from '@/utils';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
@@ -12,26 +13,8 @@ export default function Index() {
   const [settings] = useAtom(settingsAtom);
   const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
   const [pickedList, setPickedList] = useAtom(selectedListAtom);
+  const [shoppingList, setShoppingList] = useAtom(shoppingListAtom);
   const [_, setModalVisible] = useAtom(cogModalVisibleAtom);
-
-  useEffect(() => {
-    async function getLists() {
-      try {
-        for await (const row of db.getEachAsync('select tableName from toc where type = "shoppingList";') as any) {
-          if (typeof row === 'undefined') {
-            return null;
-          }
-          if (!listsOverview?.has(row)) {
-            setListsOverview((old: any) => (old !== undefined ? new Set([...old, row]) : new Set([row])));
-          }
-        }
-      }
-      catch (error) {
-        console.log(error);
-      }
-    }
-    getLists();
-  }, []);
 
   const styles = StyleSheet.create({
     container: {
@@ -42,6 +25,10 @@ export default function Index() {
       color: settings?.theme ? settings?.theme[settings?.chosenTheme].color : '#FEFEFE',
     },
   });
+
+  useEffect(() => {
+    updateListsOverview(db, listsOverview, setListsOverview);
+  }, []);
 
   return (
     <View>
@@ -56,7 +43,8 @@ export default function Index() {
               key={item.tableName}
               onClick={async () => {
                 setPickedList(item.tableName);
-                db.runAsync(`update toc set pickedList = "${item.tableName}" where tableName = "home";`);
+                await db.runAsync(`update toc set pickedList = "${item.tableName}" where tableName = "home";`);
+                updateShoppingList(db, shoppingList, setShoppingList, item.tableName);
               }}
               cogPress={() => {
                 setModalVisible(true);
