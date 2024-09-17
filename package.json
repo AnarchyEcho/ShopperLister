@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@hookform/error-message": "^2.0.1",
     "@react-navigation/native": "^6.0.2",
     "expo": "~51.0.28",
     "expo-checkbox": "~3.0.0",

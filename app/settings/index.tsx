@@ -2,6 +2,7 @@ import { settingsAtom } from '@/atoms';
 import { ISettings } from '@/interfaces';
 import { getSettings } from '@/utils';
 import { Feather } from '@expo/vector-icons';
+import { ErrorMessage } from '@hookform/error-message';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -81,8 +82,6 @@ export default function Index() {
       color: settings?.theme ? settings?.theme[settings?.chosenTheme].modalColor : '#000000',
     },
     errorText: {
-      position: 'absolute',
-      top: 3,
       color: '#FF3333',
     },
     icon: {
@@ -166,10 +165,19 @@ export default function Index() {
                 defaultValue={Object.values(item.item)[0]}
                 control={control}
                 rules={{
-                  minLength: 4,
+                  minLength: {
+                    value: 4,
+                    message: 'Too short.',
+                  },
                   maxLength: 9,
-                  required: true,
-                  pattern: /^#[\w]+$/,
+                  required: {
+                    value: true,
+                    message: 'Please fill in the field',
+                  },
+                  pattern: {
+                    value: /^#\w{3,6}\d{0,2}$/,
+                    message: 'Only legal hexcodes.',
+                  },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => {
                   return (
@@ -183,6 +191,18 @@ export default function Index() {
                         maxLength={9}
                         returnKeyType='next'
                       />
+                      <View>
+                        <ErrorMessage
+                          errors={errors}
+                          // @ts-expect-error expected
+                          name={Object.keys(item.item)[0]}
+                          render={({ message }) => {
+                            return (
+                              <Text style={styles.errorText}>{message}</Text>
+                            );
+                          }}
+                        />
+                      </View>
                     </View>
                   );
                 }}
