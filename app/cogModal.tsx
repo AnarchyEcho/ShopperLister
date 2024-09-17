@@ -5,7 +5,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Text, StyleSheet, TouchableOpacity, View, TextInput, Keyboard } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, View, TextInput, Keyboard, Alert } from 'react-native';
 
 interface IForm {
   name: string
@@ -142,6 +142,11 @@ export default function cogModal() {
 
   const onDelete = handleSubmit(async () => {
     if (page === 'lists') {
+      const listAmount = await db.getAllAsync('select * from toc where type = "shoppingList"');
+      if (listAmount.length === 1) {
+        Alert.alert('Warning', 'You can\'t delete the only list.');
+        return;
+      }
       const firstList = await db.getFirstAsync('select tableName from toc where type = "shoppingList"') as any;
       await db.runAsync(`update or ignore toc set pickedList = "${firstList.tableName}" where tableName = "home"`);
       await db.runAsync(`delete from toc where tableName = "${name}"`);

@@ -50,6 +50,17 @@ export default function RootLayout() {
     },
   };
 
+  async function checkList() {
+    const res = await db.getAllAsync('select * from toc where type = "shoppingList"');
+    if (res.length === 0) {
+      await db.execAsync(`
+          create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
+          insert or ignore into toc values (null, "list_1", "shoppingList", null, null);
+          insert or ignore into toc values (null, "home", "listView", "true", "list_1");
+        `);
+    }
+  }
+
   useEffect(() => {
     db.execAsync(`
       PRAGMA journal_mode = WAL;
@@ -58,12 +69,9 @@ export default function RootLayout() {
       insert or ignore into settings values (null, "chosenTheme", "dark");
       insert or ignore into settings values (null, "theme", '${JSON.stringify(initConfig)}');
       insert or ignore into toc values (null, "settings", "settings", "false", null);
-      create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
-      insert or ignore into toc values (null, "home", "listView", "true", "list_1");
       insert or ignore into toc values (null, "lists", "listsOverview", "false", null);
-      insert or ignore into toc values (null, "list_1", "shoppingList", null, null);
     `);
-
+    checkList();
     getSettings(db, settings, setSettings);
 
     async function getPage() {
