@@ -19,6 +19,7 @@
     "production": {
       "extends": "base",
       "android": {
+        "autoIncrement": true,
         "buildType": "apk",
         "image": "latest"
       }
