@@ -39,7 +39,7 @@ export default function Index() {
           return (
             <ListItem
               name={item.tableName}
-              pickedList={pickedList.toLowerCase()}
+              pickedList={pickedList}
               key={item.tableName}
               onClick={async () => {
                 setPickedList(item.tableName);
