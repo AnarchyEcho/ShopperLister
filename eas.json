@@ -24,7 +24,6 @@
         "buildType": "apk",
         "image": "latest"
       },
-      "developmentClient": true
     },
     "production": {
       "extends": "base",
