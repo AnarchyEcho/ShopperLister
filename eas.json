@@ -10,11 +10,21 @@
     "development": {
       "extends": "base",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "autoIncrement": true,
+        "buildType": "apk",
+        "image": "latest"
+      }
     },
     "preview": {
       "extends": "base",
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "image": "latest"
+      },
+      "developmentClient": true
     },
     "production": {
       "extends": "base",

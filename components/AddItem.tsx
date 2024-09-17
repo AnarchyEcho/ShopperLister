@@ -161,7 +161,7 @@ export const AddItem = () => {
                 minLength: 1,
                 maxLength: 17,
                 required: true,
-                pattern: /^[\w_-]+$/,
+                pattern: /^[A-z][\w_-]+$/,
               }}
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
