@@ -23,7 +23,7 @@
       "android": {
         "buildType": "apk",
         "image": "latest"
-      },
+      }
     },
     "production": {
       "extends": "base",
