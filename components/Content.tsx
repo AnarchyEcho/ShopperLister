@@ -34,7 +34,7 @@ export const Content = () => {
           return (
             <ListItem
               name={item.name}
-              amount={item.amount}
+              amount={`${item.amount}`}
               checked={item.checked}
               key={item.name}
               onClick={async () => {

@@ -103,7 +103,7 @@ export const AddItem = () => {
   const onSubmit = handleSubmit(async (data) => {
     if (page === 'lists') {
       await db.runAsync(`insert or ignore into toc values (null, "${data.name}", "shoppingList", null, null)`);
-      await db.runAsync(`create table if not exists ${data.name} (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text)`);
+      await db.runAsync(`create table if not exists ${data.name} (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount text, checked text)`);
       updateListsOverview(db, listsOverview, setListsOverview);
       Keyboard.dismiss();
       reset();
@@ -195,7 +195,7 @@ export const AddItem = () => {
                   minLength: 1,
                   maxLength: 5,
                   required: true,
-                  pattern: /^[\d]+$/,
+                  pattern: /^-?[\d]+$/,
                 }}
                 render={({ field: { onChange, onBlur, value } }) => {
                   return (
@@ -211,7 +211,7 @@ export const AddItem = () => {
                         ref={amountRef}
                         keyboardType='number-pad'
                         returnKeyType='done'
-                        onSubmitEditing={Keyboard.dismiss}
+                        onSubmitEditing={onSubmit}
                       />
                     </View>
                   );

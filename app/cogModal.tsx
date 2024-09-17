@@ -216,7 +216,7 @@ export default function cogModal() {
                 minLength: 1,
                 maxLength: 5,
                 required: true,
-                pattern: /^[\d]+$/,
+                pattern: /^-?[\d]+$/,
               }}
               render={({ field: { onChange, onBlur, value } }) => {
                 return (

@@ -54,7 +54,7 @@ export default function RootLayout() {
     const res = await db.getAllAsync('select * from toc where type = "shoppingList"');
     if (res.length === 0) {
       await db.execAsync(`
-          create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount integer, checked text);
+          create table if not exists list_1 (id INTEGER PRIMARY KEY UNIQUE NOT NULL, name text, amount text, checked text);
           insert or ignore into toc values (null, "list_1", "shoppingList", null, null);
           insert or ignore into toc values (null, "home", "listView", "true", "list_1");
         `);
