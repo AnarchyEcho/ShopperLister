@@ -8,6 +8,7 @@ import { Header, AddItem } from '@/components';
 import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
 import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
+import { getSettings } from '@/utils';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 SplashScreen.preventAutoHideAsync();
@@ -62,20 +63,9 @@ export default function RootLayout() {
       insert or ignore into toc values (null, "lists", "listsOverview", "false", null);
       insert or ignore into toc values (null, "list_1", "shoppingList", null, null);
     `);
-    async function getSettings() {
-      try {
-        for await (const row of db.getEachAsync('select name,value from settings;') as any) {
-          setSettings((old: any) => ({
-            ...old,
-            [row.name]: row.name === 'theme' ? JSON.parse(row.value) : row.value,
-          }));
-        }
-      }
-      catch (error) {
-        console.log(error);
-      }
-    };
-    getSettings();
+
+    getSettings(db, settings, setSettings);
+
     async function getPage() {
       try {
         const picked = await db.getFirstAsync('select pickedList from toc where pickedList is not NULL') as any;
