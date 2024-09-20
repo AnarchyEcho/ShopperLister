@@ -161,7 +161,7 @@ export const AddItem = () => {
                 minLength: 1,
                 maxLength: 17,
                 required: true,
-                pattern: /^[A-z][\w_-]+$/,
+                pattern: page === 'lists' ? /^[A-zæøåÆØÅ][\w_-æøåÆØÅ]+$/ : /^[A-zæøåÆØÅ][\w_-æøåÆØÅ\s]+$/,
               }}
               render={({ field: { onChange, onBlur, value } }) => {
                 return (

@@ -8,7 +8,7 @@ import { Header, AddItem } from '@/components';
 import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
 import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
-import { getSettings } from '@/utils';
+import { getSettings, updateListsOverview, updateShoppingList } from '@/utils';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 SplashScreen.preventAutoHideAsync();
@@ -18,7 +18,7 @@ export default function RootLayout() {
   const [page, setPage] = useAtom(selectedPageAtom);
   const [pickedList, setPickedList] = useAtom(selectedListAtom);
   const [listsOverview, setListsOverview] = useAtom(listsOverviewAtom);
-  const [_, setShoppingList] = useAtom(shoppingListAtom);
+  const [shoppingList, setShoppingList] = useAtom(shoppingListAtom);
   const [modalVisible, setModalVisible] = useAtom(cogModalVisibleAtom);
 
   const initConfig: ISettings['theme'] = {
@@ -146,6 +146,8 @@ export default function RootLayout() {
         await db.runAsync('update toc set selected = "false" where selected = "true"');
         await db.runAsync('update toc set selected = "true" where tableName = "home"');
         router.navigate('/');
+        await updateListsOverview(db, listsOverview, setListsOverview);
+        updateShoppingList(db, shoppingList, setShoppingList, pickedList);
       }
     }
     realBackHandler();
@@ -153,7 +155,7 @@ export default function RootLayout() {
   };
   BackHandler.addEventListener('hardwareBackPress', handleBackBtn);
 
-  // useDrizzleStudio(db);
+  useDrizzleStudio(db);
   return (
     <SafeAreaView style={styles.container}>
       <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
