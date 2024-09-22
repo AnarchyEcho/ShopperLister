@@ -155,7 +155,7 @@ export default function RootLayout() {
   };
   BackHandler.addEventListener('hardwareBackPress', handleBackBtn);
 
-  useDrizzleStudio(db);
+  // useDrizzleStudio(db);
   return (
     <SafeAreaView style={styles.container}>
       <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
