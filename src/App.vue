@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
-import { onBackKeyDown } from 'tauri-plugin-app-events-api';
-onBackKeyDown(() => {
-  console.log("tried backing");
-  return false;
-})
+
+!window.localStorage.getItem("routerState") && window.localStorage.setItem("routerState", "/")
 </script>
 
 <template>
