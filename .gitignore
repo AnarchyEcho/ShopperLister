@@ -1,3 +1,4 @@
+bun.lock
 # Nuxt dev/build outputs
 .output
 .data
