@@ -22,17 +22,17 @@ onBackKeyDown(() => {
 }
 
 .app {
-  border: solid white 2px;
   height: 98vh;
 }
 
 a {
-  font-weight: 500;
   color: #FAFAFA;
-  text-decoration: inherit;
+  text-decoration: none;
 }
 
 h1 {
+  margin: 0;
+  padding: 0;
   text-align: center;
   color: #ffa500;
 }

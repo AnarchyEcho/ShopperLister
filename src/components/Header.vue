@@ -12,10 +12,10 @@
 
 <style lang="scss" scoped>
 .container {
+  background-color: #ffa500;
   display: flex;
   justify-content: center;
   align-content: space-between;
   padding: 10px;
-  border: solid white 2px;
 }
 </style>
