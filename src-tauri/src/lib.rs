@@ -1,3 +1,10 @@
+use tauri::command;
+
+#[command]
+fn exit() {
+    std::process::exit(0x0)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -8,7 +15,7 @@ pub fn run() {
             app.handle().plugin(tauri_plugin_app_events::init())?;
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![exit])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

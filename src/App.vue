@@ -5,7 +5,7 @@ import Header from './components/Header.vue';
 </script>
 
 <template>
-  <div class="app">
+  <div>
     <component :is="Header" />
     <RouterView />
   </div>
@@ -13,13 +13,20 @@ import Header from './components/Header.vue';
 
 <style lang="scss">
 :root {
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
 }
 
-.app {
-  height: 98vh;
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  height: 98%;
+  width: 100%;
 }
 
 a {
