@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AddItem from './components/AddItem.vue';
 import Header from './components/Header.vue';
 
 !window.localStorage.getItem("routerState") && window.localStorage.setItem("routerState", "/")
@@ -8,6 +9,7 @@ import Header from './components/Header.vue';
   <div>
     <component :is="Header" />
     <RouterView />
+    <component :is="AddItem" />
   </div>
 </template>
 

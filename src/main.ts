@@ -4,9 +4,21 @@ import App from './App.vue';
 import Home from './pages/index.vue';
 import Lists from './pages/lists.vue';
 import { addIcons, OhVueIcon } from 'oh-vue-icons';
-import { MdHome, FaListUl, FaFilter } from 'oh-vue-icons/icons';
+import {
+  MdHome,
+  FaListUl,
+  FaFilter,
+  BiChevronDown,
+  MdPlaylistadd,
+} from 'oh-vue-icons/icons';
 
-addIcons(MdHome, FaListUl, FaFilter);
+addIcons(
+  MdHome,
+  FaListUl,
+  FaFilter,
+  BiChevronDown,
+  MdPlaylistadd
+);
 
 const routes = [
   { path: '/', component: Home },
@@ -20,6 +32,6 @@ const router = createRouter({
 
 const app = createApp(App);
 
-app.component('v-icon', OhVueIcon);
+app.component('VIcon', OhVueIcon);
 
 app.use(router).mount('#app');
