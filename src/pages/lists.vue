@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>Lists</h1>
+  <div></div>
 </template>
 
 <style scoped lang="scss"></style>
