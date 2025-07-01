@@ -87,6 +87,7 @@ export default typescriptEslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       'vue/first-attribute-linebreak': 'off',
+      'vue/multi-word-component-names': 'off',
     },
   },
   eslintConfigPrettier,
