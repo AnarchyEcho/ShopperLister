@@ -7,7 +7,7 @@ const localStorage = window.localStorage;
 
 const router = useRouter();
 const route = useRoute();
-let routerState = ref(localStorage.getItem("routerState"))
+const routerState = ref(localStorage.getItem("routerState"));
 
 const handleState = () => {
   const path = route.path != '/' ? route.path.replace('/', '') : '/';
