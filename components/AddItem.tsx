@@ -6,6 +6,7 @@ import { useAtom } from 'jotai';
 import { useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, TouchableOpacity, View, Text, TextInput, Keyboard } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface IForm {
   name: string
@@ -120,7 +121,7 @@ export const AddItem = () => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={open ? styles.buttonWrapperOpen : styles.buttonWrapperClosed}
+      style={[open ? styles.buttonWrapperOpen : styles.buttonWrapperClosed, { bottom: useSafeAreaInsets().bottom }]}
       onPress={() => {
         if (open) { return; }
         else {

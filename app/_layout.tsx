@@ -9,6 +9,8 @@ import { router, SplashScreen, Stack } from 'expo-router';
 import { useAtom } from 'jotai';
 import { cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
 import { getSettings, updateListsOverview, updateShoppingList } from '@/utils';
+import { NavigationContainer } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const db = sqlite.openDatabaseSync('ShopperListerDB');
 SplashScreen.preventAutoHideAsync();
@@ -159,16 +161,16 @@ export default function RootLayout() {
   return (
     <SafeAreaView style={styles.container}>
       <sqlite.SQLiteProvider databaseName="ShopperListerDB" useSuspense>
-        <StatusBar
-          style={settings?.chosenTheme === 'dark' ? 'light' : 'dark'}
-          backgroundColor={settings?.theme ? settings?.theme[settings?.chosenTheme].background : '#232323'}
-          translucent={false}
-        />
+        <StatusBar style='light' />
         <Header />
-        <Stack>
+        <Stack screenOptions={{
+          contentStyle: {
+            marginBottom: useSafeAreaInsets().bottom,
+          },
+        }}>
           <Stack.Screen name='index' options={{ headerShown: false, animationDuration: 100 }} />
           <Stack.Screen name='cogModal' options={{ headerShown: false, animation: 'fade', animationDuration: 100, presentation: 'transparentModal' }} />
-          <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 100 }} />
+          {/* <Stack.Screen name='settings/index' options={{ headerShown: false, animation: 'slide_from_right', animationDuration: 100 }} /> */}
           <Stack.Screen name='lists/index' options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 100 }} />
         </Stack>
         {(page !== 'settings' && !modalVisible) && <AddItem />}
