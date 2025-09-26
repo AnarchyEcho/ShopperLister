@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { addItemOpenAtom, cogModalVisibleAtom, listsOverviewAtom, selectedListAtom, selectedPageAtom, settingsAtom, shoppingListAtom } from '@/atoms';
 import { useSQLiteContext } from 'expo-sqlite';
 import { updateListsOverview, updateShoppingList } from '@/utils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const Header = () => {
   const db = useSQLiteContext();
@@ -28,6 +29,7 @@ export const Header = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignContent: 'center',
+      marginTop: useSafeAreaInsets().top,
     },
     text: {
       color: settings?.theme ? settings?.theme[settings?.chosenTheme].headerColor : '#FEFEFE',
@@ -81,9 +83,9 @@ export const Header = () => {
       </Text>
 
       <Link
-        href={page.includes('settings') ? '/' : '/settings'}
+        href={'/'}
         onPress={async () => {
-          page.includes('settings') ? await pressHandler('home', true) : await pressHandler('settings', false);
+          page.includes('settings') ? await pressHandler('home', true) : await pressHandler('home', true);
         }}>
         {page.includes('settings') ?
           <Entypo name="home" style={styles.icon} />
